@@ -4,6 +4,7 @@ import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.customer.CreateCustomerDto;
 import com.example.customer_booking_service.dto.customer.CustomerDto;
 import com.example.customer_booking_service.dto.customer.UpdateCustomerDto;
+import com.example.customer_booking_service.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/customer")
 public class CustomerController {
+    private final BookingService bookingService;
+
     @GetMapping("/all")
     public ResponseEntity<List<CustomerDto>> getCustomers() {
         return ResponseEntity.ok(List.of());

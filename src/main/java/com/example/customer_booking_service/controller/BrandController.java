@@ -4,6 +4,7 @@ import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.brand.BrandDto;
 import com.example.customer_booking_service.dto.brand.CreateBrandDto;
 import com.example.customer_booking_service.dto.brand.UpdateBrandDto;
+import com.example.customer_booking_service.service.BrandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/brand")
 public class BrandController {
+    private final BrandService brandService;
+
     @GetMapping("/all")
     public ResponseEntity<List<BrandDto>> getBrands() {
         return ResponseEntity.ok(List.of());
