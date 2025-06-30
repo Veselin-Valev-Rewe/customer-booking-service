@@ -1,5 +1,6 @@
 package com.example.customer_booking_service.controller;
 
+import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.customer.CreateCustomerDto;
 import com.example.customer_booking_service.dto.customer.CustomerDto;
 import com.example.customer_booking_service.dto.customer.UpdateCustomerDto;
@@ -28,7 +29,7 @@ public class CustomerController {
     @PostMapping("/create")
     public ResponseEntity<CustomerDto> createCustomer(@RequestBody @Valid CreateCustomerDto customerDto) {
         var createdCustomer = CustomerDto.builder().build();
-        URI location = URI.create("/customers/" + createdCustomer.getId());
+        URI location = URI.create("/customer/" + createdCustomer.getId());
         return ResponseEntity.created(location).body(createdCustomer);
     }
 
@@ -40,5 +41,10 @@ public class CustomerController {
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteCustomer(@RequestParam long id) {
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/bookings")
+    public ResponseEntity<List<BookingDto>> getCustomerBookings(@RequestParam long id) {
+        return ResponseEntity.ok(List.of());
     }
 }
