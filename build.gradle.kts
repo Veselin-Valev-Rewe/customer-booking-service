@@ -9,8 +9,13 @@ version = "0.0.1-SNAPSHOT"
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion.set(JavaLanguageVersion.of(21))
 	}
+}
+
+val liquibaseRuntime by configurations.creating {
+	isCanBeResolved = true
+	isCanBeConsumed = false
 }
 
 configurations {
@@ -25,14 +30,20 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+
 	implementation("org.liquibase:liquibase-core")
+
+	runtimeOnly("org.postgresql:postgresql")
+
+	liquibaseRuntime("org.liquibase:liquibase-core")
+	liquibaseRuntime("org.liquibase:liquibase-groovy-dsl:2.1.1")
+
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

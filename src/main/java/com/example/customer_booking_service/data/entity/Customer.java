@@ -1,0 +1,36 @@
+package com.example.customer_booking_service.data.entity;
+
+import com.example.customer_booking_service.data.enums.CustomerStatus;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDate;
+import java.util.Set;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class Customer extends BaseEntity {
+    private String fullName;
+
+    private String email;
+
+    private CustomerStatus status;
+
+    private int age;
+
+    private LocalDate created;
+
+    private LocalDate updated;
+
+    @OneToMany(mappedBy = "customer")
+    private Set<Booking> bookings;
+}

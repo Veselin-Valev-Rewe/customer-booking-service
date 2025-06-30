@@ -1,0 +1,58 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: you
+      changes:
+        - createTable:
+            tableName: booking
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+              - column:
+                  name: record_created
+                  type: DATE
+              - column:
+                  name: record_updated
+                  type: DATE
+              - column:
+                  name: start_date
+                  type: DATE
+              - column:
+                  name: end_date
+                  type: DATE
+              - column:
+                  name: brand_id
+                  type: BIGINT
+              - column:
+                  name: customer_id
+                  type: BIGINT
+
+        - addForeignKeyConstraint:
+            baseTableName: booking
+            baseColumnNames: brand_id
+            constraintName: fk_booking_brand
+            referencedTableName: brand
+            referencedColumnNames: id
+            onDelete: SET NULL
+
+        - addForeignKeyConstraint:
+            baseTableName: booking
+            baseColumnNames: customer_id
+            constraintName: fk_booking_customer
+            referencedTableName: customer
+            referencedColumnNames: id
+            onDelete: CASCADE
