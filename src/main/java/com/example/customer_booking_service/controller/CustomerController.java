@@ -15,39 +15,39 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/customer")
+@RequestMapping("/api/customers")
 public class CustomerController {
     private final BookingService bookingService;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<CustomerDto>> getCustomers() {
         return ResponseEntity.ok(List.of());
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<CustomerDto> getCustomerById(@RequestParam long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable long id) {
         return ResponseEntity.ok(CustomerDto.builder().build());
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<CustomerDto> createCustomer(@RequestBody @Valid CreateCustomerDto customerDto) {
         var createdCustomer = CustomerDto.builder().build();
-        URI location = URI.create("/customer/" + createdCustomer.getId());
+        URI location = URI.create("/customers/" + createdCustomer.getId());
         return ResponseEntity.created(location).body(createdCustomer);
     }
 
-    @PutMapping("/update")
+    @PutMapping
     public ResponseEntity<CustomerDto> updateCustomer(@RequestBody @Valid UpdateCustomerDto customerDto) {
         return ResponseEntity.ok(CustomerDto.builder().build());
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteCustomer(@RequestParam long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable long id) {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/bookings")
-    public ResponseEntity<List<BookingDto>> getCustomerBookings(@RequestParam long id) {
+    @GetMapping("/{id}/bookings")
+    public ResponseEntity<List<BookingDto>> getCustomerBookings(@PathVariable long id) {
         return ResponseEntity.ok(List.of());
     }
 }

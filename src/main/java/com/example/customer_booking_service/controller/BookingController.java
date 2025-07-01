@@ -1,6 +1,5 @@
 package com.example.customer_booking_service.controller;
 
-import com.example.customer_booking_service.dto.booking.AddBrandDto;
 import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.booking.CreateBookingDto;
 import com.example.customer_booking_service.service.BookingService;
@@ -13,24 +12,24 @@ import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/booking")
+@RequestMapping("/api/bookings")
 public class BookingController {
     private final BookingService bookingService;
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<BookingDto> createBooking(@RequestBody @Valid CreateBookingDto bookingDto) {
         var createdBooking = BookingDto.builder().build();
-        URI location = URI.create("/booking/" + createdBooking.getId());
+        URI location = URI.create("/bookings/" + createdBooking.getId());
         return ResponseEntity.created(location).body(createdBooking);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteBooking(@RequestParam long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBooking(@PathVariable long id) {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/addBrand")
-    public ResponseEntity<Void> addBrandToBooking(@RequestBody @Valid AddBrandDto addBrandDto) {
+    @PatchMapping("/{id}/brands/{brandId}")
+    public ResponseEntity<Void> addBrandToBooking(@PathVariable long id, @PathVariable long brandId) {
         return ResponseEntity.noContent().build();
     }
 }

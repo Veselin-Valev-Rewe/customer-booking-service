@@ -15,39 +15,39 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/brand")
+@RequestMapping("/api/brands")
 public class BrandController {
     private final BrandService brandService;
 
-    @GetMapping("/all")
+    @GetMapping()
     public ResponseEntity<List<BrandDto>> getBrands() {
         return ResponseEntity.ok(List.of());
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<BrandDto> getBrandById(@RequestParam long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<BrandDto> getBrandById(@PathVariable long id) {
         return ResponseEntity.ok(BrandDto.builder().build());
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<BrandDto> createBrand(@RequestBody @Valid CreateBrandDto brandDto) {
         var createdBrand = BrandDto.builder().build();
-        URI location = URI.create("/brand/" + createdBrand.getId());
+        URI location = URI.create("/brands/" + createdBrand.getId());
         return ResponseEntity.created(location).body(createdBrand);
     }
 
-    @PutMapping("/update")
+    @PutMapping()
     public ResponseEntity<BrandDto> updateBrand(@RequestBody @Valid UpdateBrandDto brandDto) {
         return ResponseEntity.ok(BrandDto.builder().build());
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteBrand(@RequestParam long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBrand(@PathVariable long id) {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/bookings")
-    public ResponseEntity<List<BookingDto>> getBrandBookings(@RequestParam long id) {
+    @GetMapping("/{id}/bookings")
+    public ResponseEntity<List<BookingDto>> getBrandBookings(@PathVariable long id) {
         return ResponseEntity.ok(List.of());
     }
 }

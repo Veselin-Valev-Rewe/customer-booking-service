@@ -5,20 +5,20 @@ info:
   description: API for managing customer bookings
 
 tags:
-  - name: Customer
+  - name: Customers
     description: Operations related to customers
-  - name: Brand
+  - name: Brands
     description: Operations related to brands
-  - name: Booking
+  - name: Bookings
     description: Operations related to bookings
 
 paths:
   #Customer
-  /api/customer/all:
+  /api/customers:
     get:
       summary: Get all customers
       tags:
-        - Customer
+        - Customers
       responses:
         '200':
           description: A list of customers
@@ -28,34 +28,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CustomerDto'
-
-  /api/customer/get:
-    get:
-      summary: Get a customer by ID
-      tags:
-        - Customer
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Customer found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerDto'
-        '404':
-          description: Customer not found
-
-  /api/customer/create:
     post:
       summary: Create a new customer
       tags:
-        - Customer
+        - Customers
       requestBody:
         required: true
         content:
@@ -69,12 +45,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerDto'
-
-  /api/customer/update:
     put:
       summary: Update a customer
       tags:
-        - Customer
+        - Customers
       requestBody:
         required: true
         content:
@@ -90,15 +64,13 @@ paths:
                 $ref: '#/components/schemas/CustomerDto'
         '404':
           description: Customer not found
-
-  /api/customer/delete:
     delete:
       summary: Delete a customer by ID
       tags:
-        - Customer
+        - Customers
       parameters:
         - name: id
-          in: query
+          in: path
           required: true
           schema:
             type: integer
@@ -109,14 +81,36 @@ paths:
         '404':
           description: Customer not found
 
-  /api/customer/bookings:
+  /api/customers/{id}:
+    get:
+      summary: Get a customer by ID
+      tags:
+        - Customers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Customer found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDto'
+        '404':
+          description: Customer not found
+
+  /api/customers/bookings:
     get:
       summary: Get bookings for customer
       tags:
-        - Customer
+        - Customers
       parameters:
         - name: id
-          in: query
+          in: path
           required: true
           schema:
             type: integer
@@ -132,11 +126,11 @@ paths:
                   $ref: '#/components/schemas/BookingDto'
 
   #Brand
-  /api/brand/all:
+  /api/brands:
     get:
       summary: Get all brands
       tags:
-        - Brand
+        - Brands
       responses:
         '200':
           description: A list of brands
@@ -146,34 +140,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/BrandDto'
-
-  /api/brand/get:
-    get:
-      summary: Get a brand by ID
-      tags:
-        - Brand
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Brand found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BrandDto'
-        '404':
-          description: Brand not found
-
-  /api/brand/create:
     post:
       summary: Create a new brand
       tags:
-        - Brand
+        - Brands
       requestBody:
         required: true
         content:
@@ -187,12 +157,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BrandDto'
-
-  /api/brand/update:
     put:
       summary: Update a brand
       tags:
-        - Brand
+        - Brands
       requestBody:
         required: true
         content:
@@ -208,12 +176,10 @@ paths:
                 $ref: '#/components/schemas/BrandDto'
         '404':
           description: Brand not found
-
-  /api/brand/delete:
     delete:
       summary: Delete a brand by ID
       tags:
-        - Brand
+        - Brands
       parameters:
         - name: id
           in: query
@@ -227,14 +193,36 @@ paths:
         '404':
           description: Brand not found
 
-  /api/brand/bookings:
+  /api/brands/{id}:
+    get:
+      summary: Get a brand by ID
+      tags:
+        - Brands
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Brand found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandDto'
+        '404':
+          description: Brand not found
+
+  /api/brands/{id}/bookings:
     get:
       summary: Get bookings for brand
       tags:
-        - Brand
+        - Brands
       parameters:
         - name: id
-          in: query
+          in: path
           required: true
           schema:
             type: integer
@@ -250,11 +238,11 @@ paths:
                   $ref: '#/components/schemas/BookingDto'
 
   #Booking
-  /api/booking/create:
+  /api/bookings:
     post:
       summary: Creates booking for customer
       tags:
-        - Booking
+        - Bookings
       requestBody:
         required: true
         content:
@@ -270,12 +258,10 @@ paths:
                 $ref: '#/components/schemas/BookingDto'
         '404':
           description: Customer not found
-
-  /api/booking/delete:
     delete:
       summary: Deletes booking for customer
       tags:
-        - Booking
+        - Bookings
       parameters:
         - name: id
           in: query
@@ -289,17 +275,24 @@ paths:
         '404':
           description: Booking not found
 
-  /api/booking/addBrand:
+  /api/bookings/{id}/brands/{brandId}:
     patch:
       summary: Adds brand to booking
       tags:
-        - Booking
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddBrandDto'
+        - Bookings
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: brandId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '204':
           description: Brand added
@@ -500,15 +493,3 @@ components:
           type: integer
           format: int64
           example: 1
-    AddBrandDto:
-      type: object
-      properties:
-        brandId:
-          type: integer
-          format: int64
-          example: 1
-        customerId:
-          type: integer
-          format: int64
-          example: 2
-
