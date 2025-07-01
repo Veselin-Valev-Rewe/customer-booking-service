@@ -2,6 +2,8 @@ package com.example.customer_booking_service.data.entity;
 
 import com.example.customer_booking_service.data.enums.CustomerStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +25,7 @@ public class Customer extends BaseEntity {
 
     private String email;
 
+    @Enumerated(EnumType.STRING)
     private CustomerStatus status;
 
     private int age;

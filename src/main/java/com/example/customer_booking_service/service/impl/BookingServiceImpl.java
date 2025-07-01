@@ -28,14 +28,11 @@ public class BookingServiceImpl implements BookingService {
         return customerRepository.findById(bookingDto.getCustomerId()).map(customer -> {
             var dateNow = dateTimeService.now().toLocalDate();
             var booking = modelMapper.map(bookingDto, Booking.class);
+            booking.setId(null);
             booking.setCustomer(customer);
             booking.setRecordCreated(dateNow);
             booking.setRecordUpdated(dateNow);
 
-            customer.getBookings().add(booking);
-            customer.setUpdated(dateNow);
-
-            customerRepository.save(customer);
             return modelMapper.map(bookingRepository.save(booking), BookingDto.class);
         });
     }

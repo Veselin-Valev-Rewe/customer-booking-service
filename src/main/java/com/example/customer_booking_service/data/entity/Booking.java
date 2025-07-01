@@ -1,9 +1,7 @@
 package com.example.customer_booking_service.data.entity;
 
 import com.example.customer_booking_service.data.enums.BookingStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +21,7 @@ public class Booking extends BaseEntity {
 
     private String description;
 
+    @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
     private LocalDate recordCreated;

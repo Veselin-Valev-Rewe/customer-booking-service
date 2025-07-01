@@ -64,22 +64,6 @@ paths:
                 $ref: '#/components/schemas/CustomerDto'
         '404':
           description: Customer not found
-    delete:
-      summary: Delete a customer by ID
-      tags:
-        - Customers
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: Customer deleted
-        '404':
-          description: Customer not found
 
   /api/customers/{id}:
     get:
@@ -102,8 +86,24 @@ paths:
                 $ref: '#/components/schemas/CustomerDto'
         '404':
           description: Customer not found
+    delete:
+      summary: Delete a customer by ID
+      tags:
+        - Customers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Customer deleted
+        '404':
+          description: Customer not found
 
-  /api/customers/bookings:
+  /api/customers/{id}/bookings:
     get:
       summary: Get bookings for customer
       tags:
@@ -176,22 +176,6 @@ paths:
                 $ref: '#/components/schemas/BrandDto'
         '404':
           description: Brand not found
-    delete:
-      summary: Delete a brand by ID
-      tags:
-        - Brands
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: Brand deleted
-        '404':
-          description: Brand not found
 
   /api/brands/{id}:
     get:
@@ -212,6 +196,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BrandDto'
+        '404':
+          description: Brand not found
+    delete:
+      summary: Delete a brand by ID
+      tags:
+        - Brands
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Brand deleted
         '404':
           description: Brand not found
 
@@ -258,13 +258,15 @@ paths:
                 $ref: '#/components/schemas/BookingDto'
         '404':
           description: Customer not found
+
+  /api/bookings/{id}:
     delete:
       summary: Deletes booking for customer
       tags:
         - Bookings
       parameters:
         - name: id
-          in: query
+          in: path
           required: true
           schema:
             type: integer
@@ -282,13 +284,13 @@ paths:
         - Bookings
       parameters:
         - name: id
-          in: query
+          in: path
           required: true
           schema:
             type: integer
             format: int64
         - name: brandId
-          in: query
+          in: path
           required: true
           schema:
             type: integer
@@ -395,14 +397,6 @@ components:
         address:
           type: string
           example: Street example
-        created:
-          type: string
-          format: date
-          example: "2024-01-15"
-        updated:
-          type: string
-          format: date
-          example: "2024-01-15"
         shortCode:
           type: string
           example: BYD
@@ -419,14 +413,6 @@ components:
         address:
           type: string
           example: Street example
-        created:
-          type: string
-          format: date
-          example: "2024-01-15"
-        updated:
-          type: string
-          format: date
-          example: "2024-01-15"
         shortCode:
           type: string
           example: BYD

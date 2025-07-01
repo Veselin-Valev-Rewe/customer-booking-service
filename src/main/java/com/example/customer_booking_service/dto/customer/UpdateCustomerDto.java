@@ -3,11 +3,15 @@ package com.example.customer_booking_service.dto.customer;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateCustomerDto {
     @Min(value = 1, message = "Value must be a positive number.")
     private long id;

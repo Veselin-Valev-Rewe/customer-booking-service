@@ -18,8 +18,15 @@ public class BookingController {
 
     @PostMapping()
     public ResponseEntity<BookingDto> createBooking(@RequestBody @Valid CreateBookingDto bookingDto) {
-        BookingDto booking = bookingService.createBooking(bookingDto);
+        var bookingOptional = bookingService.createBooking(bookingDto);
+
+        if (bookingOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var booking = bookingOptional.get();
         URI location = URI.create("/api/bookings/" + booking.getId());
+
         return ResponseEntity.created(location).body(booking);
     }
 
