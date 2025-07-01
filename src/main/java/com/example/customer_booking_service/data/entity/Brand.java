@@ -20,9 +20,9 @@ public class Brand extends BaseEntity {
 
     private String address;
 
+    private String shortCode;
+
     private LocalDate created;
 
     private LocalDate updated;
-
-    private String shortCode;
 }

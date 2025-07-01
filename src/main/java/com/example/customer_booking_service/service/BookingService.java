@@ -4,9 +4,10 @@ import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.booking.CreateBookingDto;
 import jakarta.validation.Valid;
 
-public interface BookingService {
+import java.util.Optional;
 
-    BookingDto createBooking(@Valid CreateBookingDto bookingDto);
+public interface BookingService {
+    Optional<BookingDto> createBooking(@Valid CreateBookingDto bookingDto);
 
     boolean deleteCustomer(long id);
 
