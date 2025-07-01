@@ -18,18 +18,22 @@ public class BookingController {
 
     @PostMapping()
     public ResponseEntity<BookingDto> createBooking(@RequestBody @Valid CreateBookingDto bookingDto) {
-        var createdBooking = BookingDto.builder().build();
-        URI location = URI.create("/bookings/" + createdBooking.getId());
-        return ResponseEntity.created(location).body(createdBooking);
+        BookingDto booking = bookingService.createBooking(bookingDto);
+        URI location = URI.create("/api/bookings/" + booking.getId());
+        return ResponseEntity.created(location).body(booking);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBooking(@PathVariable long id) {
-        return ResponseEntity.noContent().build();
+        return bookingService.deleteCustomer(id) ?
+                ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/{id}/brands/{brandId}")
     public ResponseEntity<Void> addBrandToBooking(@PathVariable long id, @PathVariable long brandId) {
-        return ResponseEntity.noContent().build();
+        return bookingService.addBrandToBooking(id, brandId) ?
+                ResponseEntity.noContent().build() :
+                ResponseEntity.notFound().build();
     }
 }

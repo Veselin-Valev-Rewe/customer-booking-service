@@ -4,7 +4,7 @@ import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.customer.CreateCustomerDto;
 import com.example.customer_booking_service.dto.customer.CustomerDto;
 import com.example.customer_booking_service.dto.customer.UpdateCustomerDto;
-import com.example.customer_booking_service.service.BookingService;
+import com.example.customer_booking_service.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,37 +17,41 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/customers")
 public class CustomerController {
-    private final BookingService bookingService;
+    private final CustomerService customerService;
 
     @GetMapping
     public ResponseEntity<List<CustomerDto>> getCustomers() {
-        return ResponseEntity.ok(List.of());
+        return ResponseEntity.ok(customerService.getCustomers());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDto> getCustomerById(@PathVariable long id) {
-        return ResponseEntity.ok(CustomerDto.builder().build());
+        var customer = customerService.getCustomerById(id);
+        return customer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<CustomerDto> createCustomer(@RequestBody @Valid CreateCustomerDto customerDto) {
-        var createdCustomer = CustomerDto.builder().build();
-        URI location = URI.create("/customers/" + createdCustomer.getId());
-        return ResponseEntity.created(location).body(createdCustomer);
+        var customer = customerService.createCustomer(customerDto);
+        URI location = URI.create("/api/customers/" + customer.getId());
+        return ResponseEntity.created(location).body(customer);
     }
 
     @PutMapping
     public ResponseEntity<CustomerDto> updateCustomer(@RequestBody @Valid UpdateCustomerDto customerDto) {
-        return ResponseEntity.ok(CustomerDto.builder().build());
+        var customer = customerService.updateCustomer(customerDto);
+        return customer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable long id) {
-        return ResponseEntity.noContent().build();
+        return customerService.deleteCustomer(id) ?
+                ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}/bookings")
     public ResponseEntity<List<BookingDto>> getCustomerBookings(@PathVariable long id) {
-        return ResponseEntity.ok(List.of());
+        return ResponseEntity.ok(customerService.getCustomerBookings(id));
     }
 }
