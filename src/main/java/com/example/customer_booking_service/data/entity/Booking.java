@@ -24,10 +24,6 @@ public class Booking extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
-    private LocalDate recordCreated;
-
-    private LocalDate recordUpdated;
-
     private LocalDate startDate;
 
     private LocalDate endDate;

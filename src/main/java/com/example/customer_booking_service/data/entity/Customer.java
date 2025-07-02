@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -29,10 +28,6 @@ public class Customer extends BaseEntity {
     private CustomerStatus status;
 
     private int age;
-
-    private LocalDate created;
-
-    private LocalDate updated;
 
     @OneToMany(mappedBy = "customer")
     private Set<Booking> bookings;

@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
-
 @Entity
 @Getter
 @Setter
@@ -21,8 +19,4 @@ public class Brand extends BaseEntity {
     private String address;
 
     private String shortCode;
-
-    private LocalDate created;
-
-    private LocalDate updated;
 }

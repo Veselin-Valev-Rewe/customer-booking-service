@@ -41,7 +41,7 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public BrandDto createBrand(CreateBrandDto brandDto) {
         var brand = modelMapper.map(brandDto, Brand.class);
-        var dateNow = dateTimeService.now().toLocalDate();
+        var dateNow = dateTimeService.now();
         brand.setCreated(dateNow);
         brand.setUpdated(dateNow);
 
@@ -55,7 +55,7 @@ public class BrandServiceImpl implements BrandService {
                     existingBrand.setName(brandDto.getName());
                     existingBrand.setAddress(brandDto.getAddress());
                     existingBrand.setShortCode(brandDto.getShortCode());
-                    existingBrand.setUpdated(dateTimeService.now().toLocalDate());
+                    existingBrand.setUpdated(dateTimeService.now());
 
                     var savedBrand = brandRepository.save(existingBrand);
                     return modelMapper.map(savedBrand, BrandDto.class);

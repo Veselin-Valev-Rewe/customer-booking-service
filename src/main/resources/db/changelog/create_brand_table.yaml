@@ -21,10 +21,10 @@ databaseChangeLog:
                   type: VARCHAR(255)
               - column:
                   name: created
-                  type: DATE
+                  type: TIMESTAMP
               - column:
                   name: updated
-                  type: DATE
+                  type: TIMESTAMP
               - column:
                   name: short_code
                   type: VARCHAR(100)

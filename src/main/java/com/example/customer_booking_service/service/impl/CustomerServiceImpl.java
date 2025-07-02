@@ -42,7 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDto createCustomer(CreateCustomerDto customerDto) {
         var customer = modelMapper.map(customerDto, Customer.class);
-        var dateNow = dateTimeService.now().toLocalDate();
+        var dateNow = dateTimeService.now();
         customer.setCreated(dateNow);
         customer.setUpdated(dateNow);
 
@@ -57,7 +57,7 @@ public class CustomerServiceImpl implements CustomerService {
                     existingCustomer.setStatus(CustomerStatus.valueOf(customerDto.getStatus()));
                     existingCustomer.setEmail(customerDto.getEmail());
                     existingCustomer.setAge(customerDto.getAge());
-                    existingCustomer.setUpdated(dateTimeService.now().toLocalDate());
+                    existingCustomer.setUpdated(dateTimeService.now());
 
                     var savedCustomer = customerRepository.save(existingCustomer);
                     return modelMapper.map(savedCustomer, CustomerDto.class);

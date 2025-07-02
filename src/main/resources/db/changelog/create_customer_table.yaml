@@ -27,7 +27,7 @@ databaseChangeLog:
                   type: INT
               - column:
                   name: created
-                  type: DATE
+                  type: TIMESTAMP
               - column:
                   name: updated
-                  type: DATE
+                  type: TIMESTAMP

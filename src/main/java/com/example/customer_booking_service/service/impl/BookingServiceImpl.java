@@ -26,12 +26,12 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Optional<BookingDto> createBooking(CreateBookingDto bookingDto) {
         return customerRepository.findById(bookingDto.getCustomerId()).map(customer -> {
-            var dateNow = dateTimeService.now().toLocalDate();
+            var dateNow = dateTimeService.now();
             var booking = modelMapper.map(bookingDto, Booking.class);
             booking.setId(null);
             booking.setCustomer(customer);
-            booking.setRecordCreated(dateNow);
-            booking.setRecordUpdated(dateNow);
+            booking.setCreated(dateNow);
+            booking.setUpdated(dateNow);
 
             return modelMapper.map(bookingRepository.save(booking), BookingDto.class);
         });
@@ -65,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
         var brand = brandOptional.get();
 
         booking.setBrand(brand);
-        booking.setRecordCreated(dateTimeService.now().toLocalDate());
+        booking.setCreated(dateTimeService.now());
         bookingRepository.save(booking);
         return true;
     }

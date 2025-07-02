@@ -23,11 +23,11 @@ databaseChangeLog:
                   name: status
                   type: VARCHAR(50)
               - column:
-                  name: record_created
-                  type: DATE
+                  name: created
+                  type: TIMESTAMP
               - column:
-                  name: record_updated
-                  type: DATE
+                  name: updated
+                  type: TIMESTAMP
               - column:
                   name: start_date
                   type: DATE
