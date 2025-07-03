@@ -4,59 +4,19 @@ import com.example.customer_booking_service.data.entity.Booking;
 import com.example.customer_booking_service.data.entity.Brand;
 import com.example.customer_booking_service.data.entity.Customer;
 import com.example.customer_booking_service.data.enums.BookingStatus;
-import com.example.customer_booking_service.data.repository.BookingRepository;
-import com.example.customer_booking_service.data.repository.BrandRepository;
-import com.example.customer_booking_service.data.repository.CustomerRepository;
 import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.booking.CreateBookingDto;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Testcontainers
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class BookingControllerIntegrationTest {
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer<?> postgresSQLContainer = new PostgreSQLContainer<>(DockerImageName.parse("postgres:17-alpine"))
-            .withDatabaseName("test")
-            .withUsername("test")
-            .withPassword("test");
-
-    @Autowired
-    TestRestTemplate restTemplate;
-
-    @Autowired
-    private BookingRepository bookingRepository;
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private BrandRepository brandRepository;
-
-    @BeforeEach
-    void setUp() {
-        bookingRepository.deleteAll();
-        customerRepository.deleteAll();
-    }
+public class BookingControllerIntegrationTest extends AbstractDbIntegrationTest {
 
     @Test
     void shouldCreateBooking() {
