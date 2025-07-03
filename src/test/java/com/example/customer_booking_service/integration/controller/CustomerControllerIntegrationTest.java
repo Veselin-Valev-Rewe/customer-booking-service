@@ -98,7 +98,7 @@ public class CustomerControllerIntegrationTest {
     }
 
     @Test
-    void shouldReturnNotFoundForNonExistingCustomerById() {
+    void shouldReturnNotFound_ForNonExistingCustomerById() {
         // When
         var response = restTemplate.getForEntity("/api/customers/{id}", CustomerDto.class, 9999L);
 
@@ -175,7 +175,7 @@ public class CustomerControllerIntegrationTest {
     }
 
     @Test
-    void shouldReturnNotFoundOnUpdateForNonExistingCustomer() {
+    void shouldReturnNotFoundOnUpdate_ForNonExistingCustomer() {
         // Given
         var updateDto = UpdateCustomerDto
                 .builder()
@@ -221,7 +221,7 @@ public class CustomerControllerIntegrationTest {
     }
 
     @Test
-    void shouldReturnNotFoundOnDeleteNonExistingCustomer() {
+    void shouldReturnNotFoundOnDelete_ForNonExistingCustomer() {
         // When
         var response = restTemplate.exchange(
                 "/api/customers/{id}",
