@@ -1,5 +1,6 @@
-package com.example.customer_booking_service.controller;
+package com.example.customer_booking_service.unit.controller;
 
+import com.example.customer_booking_service.controller.BrandController;
 import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.brand.BrandDto;
 import com.example.customer_booking_service.dto.brand.CreateBrandDto;
@@ -40,6 +41,7 @@ class BrandControllerTest {
 
     @Test
     void getBrands_returnsList() throws Exception {
+        // Given
         var brands = List.of(
                 BrandDto.builder().id(1L).name("Brand A").address("Address A").shortCode("A1").build(),
                 BrandDto.builder().id(2L).name("Brand B").address("Address B").shortCode("B2").build()
@@ -47,6 +49,7 @@ class BrandControllerTest {
 
         given(brandService.getBrands()).willReturn(brands);
 
+        // When and Then
         mockMvc.perform(get("/api/brands"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))
@@ -56,6 +59,7 @@ class BrandControllerTest {
 
     @Test
     void getBrandById_found() throws Exception {
+        // Given
         var dto = BrandDto.builder()
                 .id(1L)
                 .name("Brand A")
@@ -67,6 +71,7 @@ class BrandControllerTest {
 
         given(brandService.getBrandById(1L)).willReturn(Optional.of(dto));
 
+        // When and Then
         mockMvc.perform(get("/api/brands/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Brand A")))
@@ -75,14 +80,17 @@ class BrandControllerTest {
 
     @Test
     void getBrandById_notFound() throws Exception {
+        // Given
         given(brandService.getBrandById(99L)).willReturn(Optional.empty());
 
+        // When and Then
         mockMvc.perform(get("/api/brands/99"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void createBrand_returnsCreatedBrand() throws Exception {
+        // Given
         var createDto = CreateBrandDto.builder()
                 .name("New Brand")
                 .address("New Address")
@@ -100,6 +108,7 @@ class BrandControllerTest {
 
         given(brandService.createBrand(any())).willReturn(savedDto);
 
+        // When and Then
         mockMvc.perform(post("/api/brands")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(createDto)))
@@ -111,6 +120,7 @@ class BrandControllerTest {
 
     @Test
     void updateBrand_successful() throws Exception {
+        // Given
         var updateDto = UpdateBrandDto.builder()
                 .id(1L)
                 .name("Updated Brand")
@@ -129,6 +139,7 @@ class BrandControllerTest {
 
         given(brandService.updateBrand(any())).willReturn(Optional.of(updatedDto));
 
+        // When and Then
         mockMvc.perform(put("/api/brands")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(updateDto)))
@@ -137,6 +148,7 @@ class BrandControllerTest {
 
     @Test
     void updateBrand_notFound() throws Exception {
+        // Given
         var updateDto = UpdateBrandDto.builder()
                 .id(99L)
                 .name("Ghost Brand")
@@ -146,6 +158,7 @@ class BrandControllerTest {
 
         given(brandService.updateBrand(any())).willReturn(Optional.empty());
 
+        // When and Then
         mockMvc.perform(put("/api/brands")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(updateDto)))
@@ -154,22 +167,27 @@ class BrandControllerTest {
 
     @Test
     void deleteBrand_successful() throws Exception {
+        // Given
         given(brandService.deleteBrand(1L)).willReturn(true);
 
+        // When and Then
         mockMvc.perform(delete("/api/brands/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void deleteBrand_notFound() throws Exception {
+        // GIven
         given(brandService.deleteBrand(99L)).willReturn(false);
 
+        // When and Then
         mockMvc.perform(delete("/api/brands/99"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void getBrandBookings_returnsList() throws Exception {
+        // Given
         var bookings = List.of(
                 BookingDto.builder().id(1L).title("Booking 1").build(),
                 BookingDto.builder().id(2L).title("Booking 2").build()
@@ -177,6 +195,7 @@ class BrandControllerTest {
 
         given(brandService.getBrandBookings(1L)).willReturn(bookings);
 
+        // When and Then
         mockMvc.perform(get("/api/brands/1/bookings"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))

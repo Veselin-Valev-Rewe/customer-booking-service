@@ -1,5 +1,6 @@
-package com.example.customer_booking_service.controller;
+package com.example.customer_booking_service.unit.controller;
 
+import com.example.customer_booking_service.controller.BookingController;
 import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.booking.CreateBookingDto;
 import com.example.customer_booking_service.service.BookingService;
@@ -38,7 +39,8 @@ class BookingControllerTest {
 
     @Test
     void createBooking_successful() throws Exception {
-        CreateBookingDto createDto = CreateBookingDto.builder()
+        // Given
+        var createDto = CreateBookingDto.builder()
                 .title("Test Booking")
                 .description("Description")
                 .status("CANCELLED")
@@ -47,7 +49,7 @@ class BookingControllerTest {
                 .customerId(1L)
                 .build();
 
-        BookingDto savedDto = BookingDto.builder()
+        var savedDto = BookingDto.builder()
                 .id(1L)
                 .title("Test Booking")
                 .description("Description")
@@ -61,6 +63,7 @@ class BookingControllerTest {
 
         given(bookingService.createBooking(any())).willReturn(Optional.of(savedDto));
 
+        // When and Then
         mockMvc.perform(post("/api/bookings")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(createDto)))
@@ -72,7 +75,8 @@ class BookingControllerTest {
 
     @Test
     void createBooking_notFound() throws Exception {
-        CreateBookingDto createDto = CreateBookingDto.builder()
+        // Given
+        var createDto = CreateBookingDto.builder()
                 .title("Invalid")
                 .status("PENDING")
                 .startDate(LocalDate.now())
@@ -82,6 +86,7 @@ class BookingControllerTest {
 
         given(bookingService.createBooking(any())).willReturn(Optional.empty());
 
+        // When and Then
         mockMvc.perform(post("/api/bookings")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(createDto)))
@@ -90,16 +95,20 @@ class BookingControllerTest {
 
     @Test
     void deleteBooking_successful() throws Exception {
+        // Given
         given(bookingService.deleteCustomer(1L)).willReturn(true);
 
+        // When and Then
         mockMvc.perform(delete("/api/bookings/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void deleteBooking_notFound() throws Exception {
+        // Given
         given(bookingService.deleteCustomer(999L)).willReturn(false);
 
+        // When and Then
         mockMvc.perform(delete("/api/bookings/999"))
                 .andExpect(status().isNotFound());
     }
@@ -114,8 +123,10 @@ class BookingControllerTest {
 
     @Test
     void addBrandToBooking_notFound() throws Exception {
+        // Given
         given(bookingService.addBrandToBooking(1L, 999L)).willReturn(false);
 
+        // When and Then
         mockMvc.perform(patch("/api/bookings/1/brands/999"))
                 .andExpect(status().isNotFound());
     }

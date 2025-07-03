@@ -1,5 +1,6 @@
-package com.example.customer_booking_service.controller;
+package com.example.customer_booking_service.unit.controller;
 
+import com.example.customer_booking_service.controller.CustomerController;
 import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.customer.CreateCustomerDto;
 import com.example.customer_booking_service.dto.customer.CustomerDto;
@@ -39,6 +40,7 @@ class CustomerControllerTest {
 
     @Test
     void getCustomers_returnsListOfCustomers() throws Exception {
+        // Given
         var customers = List.of(
                 CustomerDto
                         .builder()
@@ -54,8 +56,10 @@ class CustomerControllerTest {
                         .email("jane@example.com")
                         .build()
         );
+
         given(customerService.getCustomers()).willReturn(customers);
 
+        // When and Then
         mockMvc.perform(get("/api/customers"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))
@@ -67,14 +71,17 @@ class CustomerControllerTest {
 
     @Test
     void getCustomerById_found() throws Exception {
+        // Given
         var dto = CustomerDto
                 .builder()
                 .id(1L)
                 .fullName("John Doe")
                 .email("john@example.com")
                 .build();
+
         given(customerService.getCustomerById(1L)).willReturn(Optional.of(dto));
 
+        // When and Then
         mockMvc.perform(get("/api/customers/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
@@ -83,14 +90,17 @@ class CustomerControllerTest {
 
     @Test
     void getCustomerById_notFound() throws Exception {
+        // Given
         given(customerService.getCustomerById(99L)).willReturn(Optional.empty());
 
+        // When and Then
         mockMvc.perform(get("/api/customers/99"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void createCustomer_returnsCreatedCustomer() throws Exception {
+        // Given
         var createDto = CreateCustomerDto
                 .builder()
                 .fullName("John Doe")
@@ -110,6 +120,7 @@ class CustomerControllerTest {
 
         given(customerService.createCustomer(any())).willReturn(savedDto);
 
+        // When and Then
         mockMvc.perform(post("/api/customers")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(createDto)))
@@ -121,6 +132,7 @@ class CustomerControllerTest {
 
     @Test
     void updateCustomer_successful() throws Exception {
+        // Given
         var updateDto = UpdateCustomerDto
                 .builder()
                 .id(1L)
@@ -141,6 +153,7 @@ class CustomerControllerTest {
 
         given(customerService.updateCustomer(any())).willReturn(Optional.of(updatedDto));
 
+        // When and Then
         mockMvc.perform(put("/api/customers")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(updateDto)))
@@ -149,6 +162,7 @@ class CustomerControllerTest {
 
     @Test
     void updateCustomer_notFound() throws Exception {
+        // Given
         var updateDto = UpdateCustomerDto
                 .builder()
                 .id(1L)
@@ -160,6 +174,7 @@ class CustomerControllerTest {
 
         given(customerService.updateCustomer(any())).willReturn(Optional.empty());
 
+        // When and Then
         mockMvc.perform(put("/api/customers")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(updateDto)))
@@ -168,22 +183,27 @@ class CustomerControllerTest {
 
     @Test
     void deleteCustomer_successful() throws Exception {
+        // Given
         given(customerService.deleteCustomer(1L)).willReturn(true);
 
+        // When and Then
         mockMvc.perform(delete("/api/customers/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void deleteCustomer_notFound() throws Exception {
+        // Given
         given(customerService.deleteCustomer(99L)).willReturn(false);
 
+        // When and Then
         mockMvc.perform(delete("/api/customers/99"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void getCustomerBookings_returnsBookingList() throws Exception {
+        // Given
         var bookings = List.of(
                 BookingDto.builder().id(1L).title("Booking A").build(),
                 BookingDto.builder().id(2L).title("Booking B").build()
@@ -191,6 +211,7 @@ class CustomerControllerTest {
 
         given(customerService.getCustomerBookings(1L)).willReturn(bookings);
 
+        // When and Then
         mockMvc.perform(get("/api/customers/1/bookings"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))

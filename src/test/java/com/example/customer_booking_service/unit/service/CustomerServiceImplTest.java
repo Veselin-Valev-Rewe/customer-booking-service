@@ -1,13 +1,12 @@
-package com.example.customer_booking_service.service;
+package com.example.customer_booking_service.unit.service;
 
 import com.example.customer_booking_service.data.entity.Customer;
 import com.example.customer_booking_service.data.enums.CustomerStatus;
 import com.example.customer_booking_service.data.repository.BookingRepository;
 import com.example.customer_booking_service.data.repository.CustomerRepository;
-import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.customer.CreateCustomerDto;
-import com.example.customer_booking_service.dto.customer.CustomerDto;
 import com.example.customer_booking_service.dto.customer.UpdateCustomerDto;
+import com.example.customer_booking_service.service.DateTimeService;
 import com.example.customer_booking_service.service.impl.CustomerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,8 @@ class CustomerServiceImplTest {
 
     @Test
     void getCustomers_returnsMappedDtos() {
-        Customer customer = Customer.builder()
+        // Given
+        var customer = Customer.builder()
                 .id(1L)
                 .fullName("John Doe")
                 .email("john@example.com")
@@ -52,15 +52,18 @@ class CustomerServiceImplTest {
 
         when(customerRepository.findAll()).thenReturn(List.of(customer));
 
-        List<CustomerDto> customers = customerService.getCustomers();
+        // When
+        var customers = customerService.getCustomers();
 
+        // Then
         assertThat(customers).hasSize(1);
-        assertThat(customers.get(0).getFullName()).isEqualTo("John Doe");
+        assertThat(customers.getFirst().getFullName()).isEqualTo("John Doe");
     }
 
     @Test
     void getCustomerById_found_returnsMappedDto() {
-        Customer customer = Customer.builder()
+        // Given
+        var customer = Customer.builder()
                 .id(1L)
                 .fullName("Jane Doe")
                 .email("jane@example.com")
@@ -72,34 +75,40 @@ class CustomerServiceImplTest {
 
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
 
-        Optional<CustomerDto> result = customerService.getCustomerById(1L);
+        // When
+        var result = customerService.getCustomerById(1L);
 
+        // Then
         assertThat(result).isPresent();
         assertThat(result.get().getFullName()).isEqualTo("Jane Doe");
     }
 
     @Test
     void getCustomerById_notFound_returnsEmpty() {
+        // Given
         when(customerRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Optional<CustomerDto> result = customerService.getCustomerById(1L);
+        // When
+        var result = customerService.getCustomerById(1L);
 
+        // Then
         assertThat(result).isEmpty();
     }
 
     @Test
     void createCustomer_mapsAndSavesCorrectly() {
-        CreateCustomerDto dto = CreateCustomerDto.builder()
+        // Given
+        var dto = CreateCustomerDto.builder()
                 .fullName("Alice")
                 .email("alice@example.com")
                 .status("ACTIVE")
                 .age(40)
                 .build();
 
-        LocalDateTime now = LocalDateTime.now();
+        var now = LocalDateTime.now();
         when(dateTimeService.now()).thenReturn(now);
 
-        Customer saved = Customer.builder()
+        var saved = Customer.builder()
                 .id(1L)
                 .fullName("Alice")
                 .email("alice@example.com")
@@ -111,8 +120,10 @@ class CustomerServiceImplTest {
 
         when(customerRepository.save(any())).thenReturn(saved);
 
-        CustomerDto result = customerService.createCustomer(dto);
+        // When
+        var result = customerService.createCustomer(dto);
 
+        // Then
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getFullName()).isEqualTo("Alice");
         verify(customerRepository).save(any(Customer.class));
@@ -120,8 +131,9 @@ class CustomerServiceImplTest {
 
     @Test
     void updateCustomer_existingCustomer_updatedAndReturned() {
-        LocalDateTime now = LocalDateTime.now();
-        Customer existing = Customer.builder()
+        // Given
+        var now = LocalDateTime.now();
+        var existing = Customer.builder()
                 .id(1L)
                 .fullName("Old Name")
                 .email("old@example.com")
@@ -131,7 +143,7 @@ class CustomerServiceImplTest {
                 .updated(now.minusDays(1))
                 .build();
 
-        UpdateCustomerDto updateDto = UpdateCustomerDto.builder()
+        var updateDto = UpdateCustomerDto.builder()
                 .id(1L)
                 .fullName("New Name")
                 .email("new@example.com")
@@ -143,8 +155,10 @@ class CustomerServiceImplTest {
         when(customerRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
         when(dateTimeService.now()).thenReturn(now);
 
-        Optional<CustomerDto> result = customerService.updateCustomer(updateDto);
+        // When
+        var result = customerService.updateCustomer(updateDto);
 
+        // Then
         assertThat(result).isPresent();
         assertThat(result.get().getFullName()).isEqualTo("New Name");
         assertThat(result.get().getStatus()).isEqualTo("ACTIVE");
@@ -153,7 +167,8 @@ class CustomerServiceImplTest {
 
     @Test
     void updateCustomer_notFound_returnsEmpty() {
-        UpdateCustomerDto updateDto = UpdateCustomerDto.builder()
+        // Given
+        var updateDto = UpdateCustomerDto.builder()
                 .id(999L)
                 .fullName("Ghost")
                 .email("ghost@example.com")
@@ -163,37 +178,48 @@ class CustomerServiceImplTest {
 
         when(customerRepository.findById(999L)).thenReturn(Optional.empty());
 
-        Optional<CustomerDto> result = customerService.updateCustomer(updateDto);
+        // When
+        var result = customerService.updateCustomer(updateDto);
 
+        // Then
         assertThat(result).isEmpty();
     }
 
     @Test
     void deleteCustomer_exists_deletesAndReturnsTrue() {
+        // Given
         when(customerRepository.existsById(1L)).thenReturn(true);
 
-        boolean result = customerService.deleteCustomer(1L);
+        // When
+        var result = customerService.deleteCustomer(1L);
 
+        // Then
         assertThat(result).isTrue();
         verify(customerRepository).deleteById(1L);
     }
 
     @Test
     void deleteCustomer_doesNotExist_returnsFalse() {
+        // Given
         when(customerRepository.existsById(1L)).thenReturn(false);
 
-        boolean result = customerService.deleteCustomer(1L);
+        // When
+        var result = customerService.deleteCustomer(1L);
 
+        // Then
         assertThat(result).isFalse();
         verify(customerRepository, never()).deleteById(anyLong());
     }
 
     @Test
     void getCustomerBookings_returnsMappedDtos() {
+        // Given
         when(bookingRepository.findByCustomerId(1L)).thenReturn(emptyList());
 
-        List<BookingDto> bookings = customerService.getCustomerBookings(1L);
+        // When
+        var bookings = customerService.getCustomerBookings(1L);
 
+        // Then
         assertThat(bookings).isEmpty();
         verify(bookingRepository).findByCustomerId(1L);
     }

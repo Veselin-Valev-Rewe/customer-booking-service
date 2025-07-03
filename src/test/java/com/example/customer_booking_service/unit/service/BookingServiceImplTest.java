@@ -1,4 +1,4 @@
-package com.example.customer_booking_service.service;
+package com.example.customer_booking_service.unit.service;
 
 import com.example.customer_booking_service.data.entity.Booking;
 import com.example.customer_booking_service.data.entity.Brand;
@@ -7,8 +7,8 @@ import com.example.customer_booking_service.data.enums.BookingStatus;
 import com.example.customer_booking_service.data.repository.BookingRepository;
 import com.example.customer_booking_service.data.repository.BrandRepository;
 import com.example.customer_booking_service.data.repository.CustomerRepository;
-import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.booking.CreateBookingDto;
+import com.example.customer_booking_service.service.DateTimeService;
 import com.example.customer_booking_service.service.impl.BookingServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,8 @@ class BookingServiceImplTest {
 
     @Test
     void createBooking_customerExists_returnsBookingDto() {
-        CreateBookingDto dto = CreateBookingDto.builder()
+        // Given
+        var dto = CreateBookingDto.builder()
                 .title("Consultation")
                 .description("Discuss service options")
                 .status(BookingStatus.CANCELLED.name())
@@ -50,13 +51,13 @@ class BookingServiceImplTest {
                 .customerId(1L)
                 .build();
 
-        Customer customer = Customer.builder()
+        var customer = Customer.builder()
                 .id(1L)
                 .fullName("Alice")
                 .email("Example@gmail.com")
                 .build();
 
-        LocalDateTime now = LocalDateTime.now();
+        var now = LocalDateTime.now();
 
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
         when(dateTimeService.now()).thenReturn(now);
@@ -66,8 +67,10 @@ class BookingServiceImplTest {
             return booking;
         });
 
-        Optional<BookingDto> result = bookingService.createBooking(dto);
+        // When
+        var result = bookingService.createBooking(dto);
 
+        // Then
         assertThat(result).isPresent();
         assertThat(result.get().getTitle()).isEqualTo("Consultation");
         verify(bookingRepository).save(any(Booking.class));
@@ -75,50 +78,60 @@ class BookingServiceImplTest {
 
     @Test
     void createBooking_customerNotFound_returnsEmpty() {
-        CreateBookingDto dto = CreateBookingDto.builder()
+        // Given
+        var dto = CreateBookingDto.builder()
                 .customerId(404L)
                 .title("Not created")
                 .build();
 
         when(customerRepository.findById(404L)).thenReturn(Optional.empty());
 
-        Optional<BookingDto> result = bookingService.createBooking(dto);
+        // When
+        var result = bookingService.createBooking(dto);
 
+        // Then
         assertThat(result).isEmpty();
         verify(bookingRepository, never()).save(any());
     }
 
     @Test
     void deleteCustomer_bookingExists_deletesAndReturnsTrue() {
+        // Given
         when(bookingRepository.existsById(10L)).thenReturn(true);
 
-        boolean result = bookingService.deleteCustomer(10L);
+        // When
+        var result = bookingService.deleteCustomer(10L);
 
+        // Then
         assertThat(result).isTrue();
         verify(bookingRepository).deleteById(10L);
     }
 
     @Test
     void deleteCustomer_bookingNotExists_returnsFalse() {
+        // Given
         when(bookingRepository.existsById(11L)).thenReturn(false);
 
-        boolean result = bookingService.deleteCustomer(11L);
+        // When
+        var result = bookingService.deleteCustomer(11L);
 
+        // Then
         assertThat(result).isFalse();
         verify(bookingRepository, never()).deleteById(anyLong());
     }
 
     @Test
     void addBrandToBooking_bothExist_setsBrandAndReturnsTrue() {
-        long bookingId = 1L;
-        long brandId = 2L;
+        // Given
+        var bookingId = 1L;
+        var brandId = 2L;
 
-        Booking booking = Booking.builder()
+        var booking = Booking.builder()
                 .id(bookingId)
                 .title("Test Booking")
                 .build();
 
-        Brand brand = Brand.builder()
+        var brand = Brand.builder()
                 .id(brandId)
                 .name("Test Brand")
                 .build();
@@ -127,8 +140,10 @@ class BookingServiceImplTest {
         when(brandRepository.findById(brandId)).thenReturn(Optional.of(brand));
         when(dateTimeService.now()).thenReturn(LocalDateTime.now());
 
-        boolean result = bookingService.addBrandToBooking(bookingId, brandId);
+        // When
+        var result = bookingService.addBrandToBooking(bookingId, brandId);
 
+        // Then
         assertThat(result).isTrue();
         assertThat(booking.getBrand()).isEqualTo(brand);
         verify(bookingRepository).save(booking);
@@ -136,22 +151,28 @@ class BookingServiceImplTest {
 
     @Test
     void addBrandToBooking_bookingNotFound_returnsFalse() {
+        // Given
         when(bookingRepository.findById(999L)).thenReturn(Optional.empty());
 
-        boolean result = bookingService.addBrandToBooking(999L, 1L);
+        // When
+        var result = bookingService.addBrandToBooking(999L, 1L);
 
+        // Then
         assertThat(result).isFalse();
         verify(bookingRepository, never()).save(any());
     }
 
     @Test
     void addBrandToBooking_brandNotFound_returnsFalse() {
-        Booking booking = Booking.builder().id(1L).build();
+        // Given
+        var booking = Booking.builder().id(1L).build();
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
         when(brandRepository.findById(999L)).thenReturn(Optional.empty());
 
-        boolean result = bookingService.addBrandToBooking(1L, 999L);
+        // When
+        var result = bookingService.addBrandToBooking(1L, 999L);
 
+        // Then
         assertThat(result).isFalse();
         verify(bookingRepository, never()).save(any());
     }

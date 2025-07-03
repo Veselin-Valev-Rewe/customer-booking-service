@@ -1,12 +1,11 @@
-package com.example.customer_booking_service.service;
+package com.example.customer_booking_service.unit.service;
 
 import com.example.customer_booking_service.data.entity.Brand;
 import com.example.customer_booking_service.data.repository.BookingRepository;
 import com.example.customer_booking_service.data.repository.BrandRepository;
-import com.example.customer_booking_service.dto.booking.BookingDto;
-import com.example.customer_booking_service.dto.brand.BrandDto;
 import com.example.customer_booking_service.dto.brand.CreateBrandDto;
 import com.example.customer_booking_service.dto.brand.UpdateBrandDto;
+import com.example.customer_booking_service.service.DateTimeService;
 import com.example.customer_booking_service.service.impl.BrandServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,8 @@ class BrandServiceImplTest {
 
     @Test
     void getBrands_returnsMappedDtos() {
-        Brand brand = Brand.builder()
+        // GIven
+        var brand = Brand.builder()
                 .id(1L)
                 .name("Brand A")
                 .address("Address A")
@@ -49,15 +49,18 @@ class BrandServiceImplTest {
 
         when(brandRepository.findAll()).thenReturn(List.of(brand));
 
-        List<BrandDto> result = brandService.getBrands();
+        // When
+        var result = brandService.getBrands();
 
+        // Then
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getName()).isEqualTo("Brand A");
+        assertThat(result.getFirst().getName()).isEqualTo("Brand A");
     }
 
     @Test
     void getBrandById_found_returnsMappedDto() {
-        Brand brand = Brand.builder()
+        // Given
+        var brand = Brand.builder()
                 .id(2L)
                 .name("Brand B")
                 .address("Address B")
@@ -68,33 +71,39 @@ class BrandServiceImplTest {
 
         when(brandRepository.findById(2L)).thenReturn(Optional.of(brand));
 
-        Optional<BrandDto> result = brandService.getBrandById(2L);
+        // When
+        var result = brandService.getBrandById(2L);
 
+        // Then
         assertThat(result).isPresent();
         assertThat(result.get().getName()).isEqualTo("Brand B");
     }
 
     @Test
     void getBrandById_notFound_returnsEmpty() {
+        // Given
         when(brandRepository.findById(999L)).thenReturn(Optional.empty());
 
-        Optional<BrandDto> result = brandService.getBrandById(999L);
+        // When
+        var result = brandService.getBrandById(999L);
 
+        // Then
         assertThat(result).isEmpty();
     }
 
     @Test
     void createBrand_mapsAndSavesCorrectly() {
-        CreateBrandDto createDto = CreateBrandDto.builder()
+        // Given
+        var createDto = CreateBrandDto.builder()
                 .name("Brand C")
                 .address("Address C")
                 .shortCode("BR-C")
                 .build();
 
-        LocalDateTime now = LocalDateTime.now();
+        var now = LocalDateTime.now();
         when(dateTimeService.now()).thenReturn(now);
 
-        Brand savedBrand = Brand.builder()
+        var savedBrand = Brand.builder()
                 .id(3L)
                 .name("Brand C")
                 .address("Address C")
@@ -105,8 +114,10 @@ class BrandServiceImplTest {
 
         when(brandRepository.save(any())).thenReturn(savedBrand);
 
-        BrandDto result = brandService.createBrand(createDto);
+        // When
+        var result = brandService.createBrand(createDto);
 
+        // Then
         assertThat(result.getId()).isEqualTo(3L);
         assertThat(result.getName()).isEqualTo("Brand C");
         verify(brandRepository).save(any(Brand.class));
@@ -114,9 +125,10 @@ class BrandServiceImplTest {
 
     @Test
     void updateBrand_existingBrand_updatedAndReturned() {
-        LocalDateTime now = LocalDateTime.now();
+        // Given
+        var now = LocalDateTime.now();
 
-        Brand existing = Brand.builder()
+        var existing = Brand.builder()
                 .id(4L)
                 .name("Old Brand")
                 .address("Old Address")
@@ -125,7 +137,7 @@ class BrandServiceImplTest {
                 .updated(now.minusDays(1))
                 .build();
 
-        UpdateBrandDto updateDto = UpdateBrandDto.builder()
+        var updateDto = UpdateBrandDto.builder()
                 .id(4L)
                 .name("Updated Brand")
                 .address("New Address")
@@ -136,8 +148,10 @@ class BrandServiceImplTest {
         when(brandRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
         when(dateTimeService.now()).thenReturn(now);
 
-        Optional<BrandDto> result = brandService.updateBrand(updateDto);
+        // When
+        var result = brandService.updateBrand(updateDto);
 
+        // Then
         assertThat(result).isPresent();
         assertThat(result.get().getName()).isEqualTo("Updated Brand");
         assertThat(result.get().getShortCode()).isEqualTo("NEW");
@@ -146,7 +160,8 @@ class BrandServiceImplTest {
 
     @Test
     void updateBrand_notFound_returnsEmpty() {
-        UpdateBrandDto dto = UpdateBrandDto.builder()
+        // Given
+        var dto = UpdateBrandDto.builder()
                 .id(404L)
                 .name("Ghost Brand")
                 .address("Nowhere")
@@ -155,37 +170,48 @@ class BrandServiceImplTest {
 
         when(brandRepository.findById(404L)).thenReturn(Optional.empty());
 
-        Optional<BrandDto> result = brandService.updateBrand(dto);
+        // When
+        var result = brandService.updateBrand(dto);
 
+        // Then
         assertThat(result).isEmpty();
     }
 
     @Test
     void deleteBrand_exists_deletesAndReturnsTrue() {
+        // Given
         when(brandRepository.existsById(10L)).thenReturn(true);
 
-        boolean result = brandService.deleteBrand(10L);
+        // When
+        var result = brandService.deleteBrand(10L);
 
+        // Then
         assertThat(result).isTrue();
         verify(brandRepository).deleteById(10L);
     }
 
     @Test
     void deleteBrand_notFound_returnsFalse() {
+        // Given
         when(brandRepository.existsById(11L)).thenReturn(false);
 
-        boolean result = brandService.deleteBrand(11L);
+        // When
+        var result = brandService.deleteBrand(11L);
 
+        // Then
         assertThat(result).isFalse();
         verify(brandRepository, never()).deleteById(anyLong());
     }
 
     @Test
     void getBrandBookings_returnsMappedDtos() {
+        // Given
         when(bookingRepository.findByBrandId(1L)).thenReturn(emptyList());
 
-        List<BookingDto> bookings = brandService.getBrandBookings(1L);
+        // When
+        var bookings = brandService.getBrandBookings(1L);
 
+        // Then
         assertThat(bookings).isEmpty();
         verify(bookingRepository).findByBrandId(1L);
     }

@@ -1,4 +1,4 @@
-package com.example.customer_booking_service.service;
+package com.example.customer_booking_service.unit.service;
 
 import com.example.customer_booking_service.service.impl.DateTimeServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -14,14 +14,17 @@ class DateTimeServiceImplTest {
 
     @Test
     void now_returns_fixed_time_from_clock() {
-        Instant fixedInstant = Instant.parse("2025-07-02T10:15:30.00Z");
-        Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.of("UTC"));
+        // Given
+        var fixedInstant = Instant.parse("2025-07-02T10:15:30.00Z");
+        var fixedClock = Clock.fixed(fixedInstant, ZoneId.of("UTC"));
 
-        DateTimeServiceImpl dateTimeService = new DateTimeServiceImpl(fixedClock);
+        var dateTimeService = new DateTimeServiceImpl(fixedClock);
 
-        LocalDateTime now = dateTimeService.now();
-        
-        LocalDateTime expected = LocalDateTime.of(2025, 7, 2, 10, 15, 30);
+        // When
+        var now = dateTimeService.now();
+
+        // Then
+        var expected = LocalDateTime.of(2025, 7, 2, 10, 15, 30);
         assertThat(now).isEqualTo(expected);
     }
 }
