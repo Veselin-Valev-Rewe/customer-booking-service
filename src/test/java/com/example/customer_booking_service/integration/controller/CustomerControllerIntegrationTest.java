@@ -2,11 +2,14 @@ package com.example.customer_booking_service.integration.controller;
 
 import com.example.customer_booking_service.data.entity.Customer;
 import com.example.customer_booking_service.data.enums.CustomerStatus;
+import com.example.customer_booking_service.data.repository.CustomerRepository;
 import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.customer.CreateCustomerDto;
 import com.example.customer_booking_service.dto.customer.CustomerDto;
 import com.example.customer_booking_service.dto.customer.UpdateCustomerDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -16,6 +19,13 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CustomerControllerIntegrationTest extends AbstractDbIntegrationTest {
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @BeforeEach
+    void setUp() {
+        customerRepository.deleteAll();
+    }
 
     @Test
     void shouldReturnCustomersList() {

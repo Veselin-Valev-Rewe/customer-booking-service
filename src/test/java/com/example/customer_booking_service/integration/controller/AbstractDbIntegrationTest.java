@@ -1,9 +1,5 @@
 package com.example.customer_booking_service.integration.controller;
 
-import com.example.customer_booking_service.data.repository.BookingRepository;
-import com.example.customer_booking_service.data.repository.BrandRepository;
-import com.example.customer_booking_service.data.repository.CustomerRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,22 +25,6 @@ public abstract class AbstractDbIntegrationTest {
 
     @Autowired
     protected TestRestTemplate restTemplate;
-
-    @Autowired
-    protected BookingRepository bookingRepository;
-
-    @Autowired
-    protected CustomerRepository customerRepository;
-
-    @Autowired
-    protected BrandRepository brandRepository;
-
-    @BeforeEach
-    void setUp() {
-        bookingRepository.deleteAll();
-        brandRepository.deleteAll();
-        customerRepository.deleteAll();
-    }
 
     @Test
     void connectionEstablished() {
