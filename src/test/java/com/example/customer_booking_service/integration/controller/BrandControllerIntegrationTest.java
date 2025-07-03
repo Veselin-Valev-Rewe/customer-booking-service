@@ -6,7 +6,7 @@ import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.brand.BrandDto;
 import com.example.customer_booking_service.dto.brand.CreateBrandDto;
 import com.example.customer_booking_service.dto.brand.UpdateBrandDto;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -22,8 +22,8 @@ public class BrandControllerIntegrationTest extends AbstractDbIntegrationTest {
     @Autowired
     private BrandRepository brandRepository;
 
-    @BeforeEach
-    void setUp() {
+    @AfterEach
+    public void tearDown() {
         brandRepository.deleteAll();
     }
 

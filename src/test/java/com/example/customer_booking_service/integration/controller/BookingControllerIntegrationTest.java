@@ -9,7 +9,7 @@ import com.example.customer_booking_service.data.repository.BrandRepository;
 import com.example.customer_booking_service.data.repository.CustomerRepository;
 import com.example.customer_booking_service.dto.booking.BookingDto;
 import com.example.customer_booking_service.dto.booking.CreateBookingDto;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -22,6 +22,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BookingControllerIntegrationTest extends AbstractDbIntegrationTest {
+
     @Autowired
     private BookingRepository bookingRepository;
 
@@ -31,11 +32,11 @@ public class BookingControllerIntegrationTest extends AbstractDbIntegrationTest 
     @Autowired
     private BrandRepository brandRepository;
 
-    @BeforeEach
-    void setUp() {
-        brandRepository.deleteAll();
+    @AfterEach
+    public void tearDown() {
         bookingRepository.deleteAll();
         customerRepository.deleteAll();
+        brandRepository.deleteAll();
     }
 
     @Test
