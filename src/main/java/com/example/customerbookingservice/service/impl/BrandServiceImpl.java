@@ -8,7 +8,6 @@ import com.example.customerbookingservice.dto.brand.BrandDto;
 import com.example.customerbookingservice.dto.brand.CreateBrandDto;
 import com.example.customerbookingservice.dto.brand.UpdateBrandDto;
 import com.example.customerbookingservice.service.BrandService;
-import com.example.customerbookingservice.service.DateTimeService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ public class BrandServiceImpl implements BrandService {
     private final BrandRepository brandRepository;
     private final BookingRepository bookingRepository;
     private final ModelMapper modelMapper;
-    private final DateTimeService dateTimeService;
 
     @Override
     public List<BrandDto> getBrands() {
@@ -41,10 +39,6 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public BrandDto createBrand(CreateBrandDto brandDto) {
         var brand = modelMapper.map(brandDto, Brand.class);
-        var dateNow = dateTimeService.now();
-        brand.setCreated(dateNow);
-        brand.setUpdated(dateNow);
-
         return modelMapper.map(brandRepository.save(brand), BrandDto.class);
     }
 
@@ -55,7 +49,6 @@ public class BrandServiceImpl implements BrandService {
                     existingBrand.setName(brandDto.getName());
                     existingBrand.setAddress(brandDto.getAddress());
                     existingBrand.setShortCode(brandDto.getShortCode());
-                    existingBrand.setUpdated(dateTimeService.now());
 
                     var savedBrand = brandRepository.save(existingBrand);
                     return modelMapper.map(savedBrand, BrandDto.class);

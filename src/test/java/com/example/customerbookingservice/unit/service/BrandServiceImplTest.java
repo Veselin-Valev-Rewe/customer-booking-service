@@ -5,7 +5,6 @@ import com.example.customerbookingservice.data.repository.BookingRepository;
 import com.example.customerbookingservice.data.repository.BrandRepository;
 import com.example.customerbookingservice.dto.brand.CreateBrandDto;
 import com.example.customerbookingservice.dto.brand.UpdateBrandDto;
-import com.example.customerbookingservice.service.DateTimeService;
 import com.example.customerbookingservice.service.impl.BrandServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,6 @@ class BrandServiceImplTest {
 
     private BrandRepository brandRepository;
     private BookingRepository bookingRepository;
-    private DateTimeService dateTimeService;
     private BrandServiceImpl brandService;
 
     @BeforeEach
@@ -31,8 +29,7 @@ class BrandServiceImplTest {
         brandRepository = mock(BrandRepository.class);
         bookingRepository = mock(BookingRepository.class);
         ModelMapper modelMapper = new ModelMapper();
-        dateTimeService = mock(DateTimeService.class);
-        brandService = new BrandServiceImpl(brandRepository, bookingRepository, modelMapper, dateTimeService);
+        brandService = new BrandServiceImpl(brandRepository, bookingRepository, modelMapper);
     }
 
     @Test
@@ -101,7 +98,6 @@ class BrandServiceImplTest {
                 .build();
 
         var now = LocalDateTime.now();
-        when(dateTimeService.now()).thenReturn(now);
 
         var savedBrand = Brand.builder()
                 .id(3L)
@@ -146,7 +142,6 @@ class BrandServiceImplTest {
 
         when(brandRepository.findById(4L)).thenReturn(Optional.of(existing));
         when(brandRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
-        when(dateTimeService.now()).thenReturn(now);
 
         // When
         var result = brandService.updateBrand(updateDto);

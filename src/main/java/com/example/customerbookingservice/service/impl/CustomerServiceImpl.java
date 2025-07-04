@@ -9,7 +9,6 @@ import com.example.customerbookingservice.dto.customer.CreateCustomerDto;
 import com.example.customerbookingservice.dto.customer.CustomerDto;
 import com.example.customerbookingservice.dto.customer.UpdateCustomerDto;
 import com.example.customerbookingservice.service.CustomerService;
-import com.example.customerbookingservice.service.DateTimeService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final BookingRepository bookingRepository;
     private final ModelMapper modelMapper;
-    private final DateTimeService dateTimeService;
 
     @Override
     public List<CustomerDto> getCustomers() {
@@ -42,10 +40,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDto createCustomer(CreateCustomerDto customerDto) {
         var customer = modelMapper.map(customerDto, Customer.class);
-        var dateNow = dateTimeService.now();
-        customer.setCreated(dateNow);
-        customer.setUpdated(dateNow);
-
         return modelMapper.map(customerRepository.save(customer), CustomerDto.class);
     }
 
@@ -57,7 +51,6 @@ public class CustomerServiceImpl implements CustomerService {
                     existingCustomer.setStatus(CustomerStatus.valueOf(customerDto.getStatus()));
                     existingCustomer.setEmail(customerDto.getEmail());
                     existingCustomer.setAge(customerDto.getAge());
-                    existingCustomer.setUpdated(dateTimeService.now());
 
                     var savedCustomer = customerRepository.save(existingCustomer);
                     return modelMapper.map(savedCustomer, CustomerDto.class);

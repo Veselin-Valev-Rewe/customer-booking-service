@@ -6,7 +6,6 @@ import com.example.customerbookingservice.dto.customer.CreateCustomerDto;
 import com.example.customerbookingservice.dto.customer.CustomerDto;
 import com.example.customerbookingservice.dto.customer.UpdateCustomerDto;
 import com.example.customerbookingservice.service.CustomerService;
-import com.example.customerbookingservice.service.DateTimeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +33,6 @@ class CustomerControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockitoBean
-    private DateTimeService dateTimeService;
 
     @Test
     void getCustomers_returnsListOfCustomers() throws Exception {

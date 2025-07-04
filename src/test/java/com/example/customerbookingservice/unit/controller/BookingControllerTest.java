@@ -4,7 +4,6 @@ import com.example.customerbookingservice.controller.BookingController;
 import com.example.customerbookingservice.dto.booking.BookingDto;
 import com.example.customerbookingservice.dto.booking.CreateBookingDto;
 import com.example.customerbookingservice.service.BookingService;
-import com.example.customerbookingservice.service.DateTimeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,6 @@ class BookingControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockitoBean
-    private DateTimeService dateTimeService;
 
     @Test
     void createBooking_successful() throws Exception {

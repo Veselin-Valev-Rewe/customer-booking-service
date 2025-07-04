@@ -7,7 +7,6 @@ import com.example.customerbookingservice.data.repository.CustomerRepository;
 import com.example.customerbookingservice.dto.booking.BookingDto;
 import com.example.customerbookingservice.dto.booking.CreateBookingDto;
 import com.example.customerbookingservice.service.BookingService;
-import com.example.customerbookingservice.service.DateTimeService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,17 +20,13 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final BrandRepository brandRepository;
     private final ModelMapper modelMapper;
-    private final DateTimeService dateTimeService;
 
     @Override
     public Optional<BookingDto> createBooking(CreateBookingDto bookingDto) {
         return customerRepository.findById(bookingDto.getCustomerId()).map(customer -> {
-            var dateNow = dateTimeService.now();
             var booking = modelMapper.map(bookingDto, Booking.class);
             booking.setId(null);
             booking.setCustomer(customer);
-            booking.setCreated(dateNow);
-            booking.setUpdated(dateNow);
 
             return modelMapper.map(bookingRepository.save(booking), BookingDto.class);
         });
@@ -65,7 +60,6 @@ public class BookingServiceImpl implements BookingService {
         var brand = brandOptional.get();
 
         booking.setBrand(brand);
-        booking.setCreated(dateTimeService.now());
         bookingRepository.save(booking);
         return true;
     }

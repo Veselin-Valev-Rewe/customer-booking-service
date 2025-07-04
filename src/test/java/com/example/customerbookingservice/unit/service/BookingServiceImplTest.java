@@ -8,14 +8,12 @@ import com.example.customerbookingservice.data.repository.BookingRepository;
 import com.example.customerbookingservice.data.repository.BrandRepository;
 import com.example.customerbookingservice.data.repository.CustomerRepository;
 import com.example.customerbookingservice.dto.booking.CreateBookingDto;
-import com.example.customerbookingservice.service.DateTimeService;
 import com.example.customerbookingservice.service.impl.BookingServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,16 +25,14 @@ class BookingServiceImplTest {
     private CustomerRepository customerRepository;
     private BookingRepository bookingRepository;
     private BrandRepository brandRepository;
-    private DateTimeService dateTimeService;
 
     @BeforeEach
     void setUp() {
         customerRepository = mock(CustomerRepository.class);
         bookingRepository = mock(BookingRepository.class);
         brandRepository = mock(BrandRepository.class);
-        dateTimeService = mock(DateTimeService.class);
         ModelMapper modelMapper = new ModelMapper();
-        bookingService = new BookingServiceImpl(customerRepository, bookingRepository, brandRepository, modelMapper, dateTimeService);
+        bookingService = new BookingServiceImpl(customerRepository, bookingRepository, brandRepository, modelMapper);
     }
 
     @Test
@@ -57,10 +53,7 @@ class BookingServiceImplTest {
                 .email("Example@gmail.com")
                 .build();
 
-        var now = LocalDateTime.now();
-
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
-        when(dateTimeService.now()).thenReturn(now);
         when(bookingRepository.save(any())).thenAnswer(inv -> {
             Booking booking = inv.getArgument(0);
             booking.setId(100L);
@@ -138,7 +131,6 @@ class BookingServiceImplTest {
 
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
         when(brandRepository.findById(brandId)).thenReturn(Optional.of(brand));
-        when(dateTimeService.now()).thenReturn(LocalDateTime.now());
 
         // When
         var result = bookingService.addBrandToBooking(bookingId, brandId);

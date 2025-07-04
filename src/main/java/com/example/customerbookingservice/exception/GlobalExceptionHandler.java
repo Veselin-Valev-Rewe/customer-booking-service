@@ -1,6 +1,5 @@
 package com.example.customerbookingservice.exception;
 
-import com.example.customerbookingservice.service.DateTimeService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,14 +8,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    private final DateTimeService dateTimeService;
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationErrors(MethodArgumentNotValidException ex) {
@@ -36,7 +34,7 @@ public class GlobalExceptionHandler {
                 ex.getClass().getSimpleName(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 request.getRequestURI(),
-                dateTimeService.now()
+                LocalDateTime.now()
         );
     }
 }

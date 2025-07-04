@@ -6,7 +6,6 @@ import com.example.customerbookingservice.dto.brand.BrandDto;
 import com.example.customerbookingservice.dto.brand.CreateBrandDto;
 import com.example.customerbookingservice.dto.brand.UpdateBrandDto;
 import com.example.customerbookingservice.service.BrandService;
-import com.example.customerbookingservice.service.DateTimeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +34,6 @@ class BrandControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockitoBean
-    private DateTimeService dateTimeService;
 
     @Test
     void getBrands_returnsList() throws Exception {
