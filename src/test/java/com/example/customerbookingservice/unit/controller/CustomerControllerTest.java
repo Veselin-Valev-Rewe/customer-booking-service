@@ -14,7 +14,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,23 +74,13 @@ class CustomerControllerTest {
                 .email("john@example.com")
                 .build();
 
-        given(customerService.getCustomerById(1L)).willReturn(Optional.of(dto));
+        given(customerService.getCustomerById(1L)).willReturn(dto);
 
         // When and Then
         mockMvc.perform(get("/api/customers/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.fullName", is("John Doe")));
-    }
-
-    @Test
-    void getCustomerById_notFound() throws Exception {
-        // Given
-        given(customerService.getCustomerById(99L)).willReturn(Optional.empty());
-
-        // When and Then
-        mockMvc.perform(get("/api/customers/99"))
-                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -147,7 +136,7 @@ class CustomerControllerTest {
                 .age(27)
                 .build();
 
-        given(customerService.updateCustomer(any())).willReturn(Optional.of(updatedDto));
+        given(customerService.updateCustomer(any())).willReturn(updatedDto);
 
         // When and Then
         mockMvc.perform(put("/api/customers")
@@ -157,44 +146,10 @@ class CustomerControllerTest {
     }
 
     @Test
-    void updateCustomer_notFound() throws Exception {
-        // Given
-        var updateDto = UpdateCustomerDto
-                .builder()
-                .id(1L)
-                .fullName("John Doe")
-                .email("john@example.com")
-                .status("ACTIVE")
-                .age(27)
-                .build();
-
-        given(customerService.updateCustomer(any())).willReturn(Optional.empty());
-
-        // When and Then
-        mockMvc.perform(put("/api/customers")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(updateDto)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     void deleteCustomer_successful() throws Exception {
-        // Given
-        given(customerService.deleteCustomer(1L)).willReturn(true);
-
         // When and Then
         mockMvc.perform(delete("/api/customers/1"))
                 .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void deleteCustomer_notFound() throws Exception {
-        // Given
-        given(customerService.deleteCustomer(99L)).willReturn(false);
-
-        // When and Then
-        mockMvc.perform(delete("/api/customers/99"))
-                .andExpect(status().isNotFound());
     }
 
     @Test

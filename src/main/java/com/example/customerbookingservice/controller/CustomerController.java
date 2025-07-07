@@ -27,7 +27,7 @@ public class CustomerController {
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDto> getCustomerById(@PathVariable long id) {
         var customer = customerService.getCustomerById(id);
-        return customer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(customer);
     }
 
     @PostMapping
@@ -40,14 +40,13 @@ public class CustomerController {
     @PutMapping
     public ResponseEntity<CustomerDto> updateCustomer(@RequestBody @Valid UpdateCustomerDto customerDto) {
         var customer = customerService.updateCustomer(customerDto);
-        return customer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(customer);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable long id) {
-        return customerService.deleteCustomer(id) ?
-                ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        customerService.deleteCustomer(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/bookings")

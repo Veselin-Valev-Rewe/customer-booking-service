@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -65,23 +64,13 @@ class BrandControllerTest {
                 .updated(LocalDateTime.now())
                 .build();
 
-        given(brandService.getBrandById(1L)).willReturn(Optional.of(dto));
+        given(brandService.getBrandById(1L)).willReturn(dto);
 
         // When and Then
         mockMvc.perform(get("/api/brands/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Brand A")))
                 .andExpect(jsonPath("$.shortCode", is("A1")));
-    }
-
-    @Test
-    void getBrandById_notFound() throws Exception {
-        // Given
-        given(brandService.getBrandById(99L)).willReturn(Optional.empty());
-
-        // When and Then
-        mockMvc.perform(get("/api/brands/99"))
-                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -133,7 +122,7 @@ class BrandControllerTest {
                 .updated(LocalDateTime.now())
                 .build();
 
-        given(brandService.updateBrand(any())).willReturn(Optional.of(updatedDto));
+        given(brandService.updateBrand(any())).willReturn(updatedDto);
 
         // When and Then
         mockMvc.perform(put("/api/brands")
@@ -143,42 +132,10 @@ class BrandControllerTest {
     }
 
     @Test
-    void updateBrand_notFound() throws Exception {
-        // Given
-        var updateDto = UpdateBrandDto.builder()
-                .id(99L)
-                .name("Ghost Brand")
-                .address("Nowhere")
-                .shortCode("GB")
-                .build();
-
-        given(brandService.updateBrand(any())).willReturn(Optional.empty());
-
-        // When and Then
-        mockMvc.perform(put("/api/brands")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(updateDto)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     void deleteBrand_successful() throws Exception {
-        // Given
-        given(brandService.deleteBrand(1L)).willReturn(true);
-
         // When and Then
         mockMvc.perform(delete("/api/brands/1"))
                 .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void deleteBrand_notFound() throws Exception {
-        // GIven
-        given(brandService.deleteBrand(99L)).willReturn(false);
-
-        // When and Then
-        mockMvc.perform(delete("/api/brands/99"))
-                .andExpect(status().isNotFound());
     }
 
     @Test

@@ -9,12 +9,12 @@ import com.example.customerbookingservice.dto.customer.CreateCustomerDto;
 import com.example.customerbookingservice.dto.customer.CustomerDto;
 import com.example.customerbookingservice.dto.customer.UpdateCustomerDto;
 import com.example.customerbookingservice.service.CustomerService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,9 +32,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Optional<CustomerDto> getCustomerById(long id) {
-        return customerRepository.findById(id)
-                .map(customer -> modelMapper.map(customer, CustomerDto.class));
+    public CustomerDto getCustomerById(long id) {
+        var customer = getCustomer(id);
+        return modelMapper.map(customer, CustomerDto.class);
     }
 
     @Override
@@ -44,27 +44,24 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Optional<CustomerDto> updateCustomer(UpdateCustomerDto customerDto) {
-        return customerRepository.findById(customerDto.getId())
-                .map(existingCustomer -> {
-                    existingCustomer.setFullName(customerDto.getFullName());
-                    existingCustomer.setStatus(CustomerStatus.valueOf(customerDto.getStatus()));
-                    existingCustomer.setEmail(customerDto.getEmail());
-                    existingCustomer.setAge(customerDto.getAge());
+    public CustomerDto updateCustomer(UpdateCustomerDto customerDto) {
+        var existingCustomer = getCustomer(customerDto.getId());
+        existingCustomer.setFullName(customerDto.getFullName());
+        existingCustomer.setStatus(CustomerStatus.valueOf(customerDto.getStatus()));
+        existingCustomer.setEmail(customerDto.getEmail());
+        existingCustomer.setAge(customerDto.getAge());
 
-                    var savedCustomer = customerRepository.save(existingCustomer);
-                    return modelMapper.map(savedCustomer, CustomerDto.class);
-                });
+        var savedCustomer = customerRepository.save(existingCustomer);
+        return modelMapper.map(savedCustomer, CustomerDto.class);
     }
 
     @Override
-    public boolean deleteCustomer(long id) {
+    public void deleteCustomer(long id) {
         if (!customerRepository.existsById(id)) {
-            return false;
+            throw new EntityNotFoundException("Customer not found");
         }
 
         customerRepository.deleteById(id);
-        return true;
     }
 
     @Override
@@ -73,5 +70,13 @@ public class CustomerServiceImpl implements CustomerService {
                 .stream()
                 .map(booking -> modelMapper.map(booking, BookingDto.class))
                 .toList();
+    }
+
+    private Customer getCustomer(long id) {
+        var customerOptional = customerRepository.findById(id);
+        if (customerOptional.isEmpty()) {
+            throw new EntityNotFoundException("Customer not found");
+        }
+        return customerOptional.get();
     }
 }

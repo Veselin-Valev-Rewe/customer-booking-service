@@ -7,11 +7,10 @@ import com.example.customerbookingservice.data.repository.CustomerRepository;
 import com.example.customerbookingservice.dto.booking.BookingDto;
 import com.example.customerbookingservice.dto.booking.CreateBookingDto;
 import com.example.customerbookingservice.service.BookingService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,38 +21,40 @@ public class BookingServiceImpl implements BookingService {
     private final ModelMapper modelMapper;
 
     @Override
-    public Optional<BookingDto> createBooking(CreateBookingDto bookingDto) {
-        return customerRepository.findById(bookingDto.getCustomerId()).map(customer -> {
-            var booking = modelMapper.map(bookingDto, Booking.class);
-            booking.setId(null);
-            booking.setCustomer(customer);
+    public BookingDto createBooking(CreateBookingDto bookingDto) {
+        var customer = customerRepository.findById(bookingDto.getCustomerId());
 
-            return modelMapper.map(bookingRepository.save(booking), BookingDto.class);
-        });
+        if (customer.isEmpty()) {
+            throw new EntityNotFoundException("Customer not found");
+        }
+        var booking = modelMapper.map(bookingDto, Booking.class);
+        booking.setId(null);
+        booking.setCustomer(customer.get());
+
+        return modelMapper.map(bookingRepository.save(booking), BookingDto.class);
     }
 
     @Override
-    public boolean deleteCustomer(long id) {
+    public void deleteCustomer(long id) {
         if (!bookingRepository.existsById(id)) {
-            return false;
+            throw new EntityNotFoundException("Booking not found");
         }
 
         bookingRepository.deleteById(id);
-        return true;
     }
 
     @Override
-    public boolean addBrandToBooking(long id, long brandId) {
+    public BookingDto addBrand(long id, long brandId) {
         var bookingOptional = bookingRepository.findById(id);
 
         if (bookingOptional.isEmpty()) {
-            return false;
+            throw new EntityNotFoundException("Booking not found");
         }
 
         var brandOptional = brandRepository.findById(brandId);
 
         if (brandOptional.isEmpty()) {
-            return false;
+            throw new EntityNotFoundException("Brand not found");
         }
 
         var booking = bookingOptional.get();
@@ -61,6 +62,7 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setBrand(brand);
         bookingRepository.save(booking);
-        return true;
+
+        return modelMapper.map(booking, BookingDto.class);
     }
 }

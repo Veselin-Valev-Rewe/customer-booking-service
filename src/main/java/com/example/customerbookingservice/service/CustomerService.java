@@ -7,18 +7,17 @@ import com.example.customerbookingservice.dto.customer.UpdateCustomerDto;
 import jakarta.validation.Valid;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CustomerService {
     List<CustomerDto> getCustomers();
 
-    Optional<CustomerDto> getCustomerById(long id);
+    CustomerDto getCustomerById(long id);
 
     CustomerDto createCustomer(@Valid CreateCustomerDto customerDto);
 
-    Optional<CustomerDto> updateCustomer(@Valid UpdateCustomerDto customerDto);
+    CustomerDto updateCustomer(@Valid UpdateCustomerDto customerDto);
 
-    boolean deleteCustomer(long id);
+    void deleteCustomer(long id);
 
     List<BookingDto> getCustomerBookings(long id);
 }

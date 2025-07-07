@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,7 +56,7 @@ class BookingControllerTest {
                 .updated(LocalDateTime.now())
                 .build();
 
-        given(bookingService.createBooking(any())).willReturn(Optional.of(savedDto));
+        given(bookingService.createBooking(any())).willReturn(savedDto);
 
         // When and Then
         mockMvc.perform(post("/api/bookings")
@@ -70,60 +69,19 @@ class BookingControllerTest {
     }
 
     @Test
-    void createBooking_notFound() throws Exception {
-        // Given
-        var createDto = CreateBookingDto.builder()
-                .title("Invalid")
-                .status("PENDING")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now().plusDays(1))
-                .customerId(999L)
-                .build();
-
-        given(bookingService.createBooking(any())).willReturn(Optional.empty());
-
-        // When and Then
-        mockMvc.perform(post("/api/bookings")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(createDto)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     void deleteBooking_successful() throws Exception {
-        // Given
-        given(bookingService.deleteCustomer(1L)).willReturn(true);
-
         // When and Then
         mockMvc.perform(delete("/api/bookings/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void deleteBooking_notFound() throws Exception {
+    void addBrand_successful() throws Exception {
         // Given
-        given(bookingService.deleteCustomer(999L)).willReturn(false);
+        given(bookingService.addBrand(1L, 10L)).willReturn(BookingDto.builder().id(1L).build());
 
         // When and Then
-        mockMvc.perform(delete("/api/bookings/999"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void addBrandToBooking_successful() throws Exception {
-        given(bookingService.addBrandToBooking(1L, 10L)).willReturn(true);
-
         mockMvc.perform(patch("/api/bookings/1/brands/10"))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void addBrandToBooking_notFound() throws Exception {
-        // Given
-        given(bookingService.addBrandToBooking(1L, 999L)).willReturn(false);
-
-        // When and Then
-        mockMvc.perform(patch("/api/bookings/1/brands/999"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
     }
 }

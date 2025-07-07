@@ -8,12 +8,12 @@ import com.example.customerbookingservice.dto.brand.BrandDto;
 import com.example.customerbookingservice.dto.brand.CreateBrandDto;
 import com.example.customerbookingservice.dto.brand.UpdateBrandDto;
 import com.example.customerbookingservice.service.BrandService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +31,10 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public Optional<BrandDto> getBrandById(long id) {
-        return brandRepository.findById(id)
-                .map(brand -> modelMapper.map(brand, BrandDto.class));
+    public BrandDto getBrandById(long id) {
+        var brand = getBrand(id);
+
+        return modelMapper.map(brand, BrandDto.class);
     }
 
     @Override
@@ -43,26 +44,23 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public Optional<BrandDto> updateBrand(UpdateBrandDto brandDto) {
-        return brandRepository.findById(brandDto.getId())
-                .map(existingBrand -> {
-                    existingBrand.setName(brandDto.getName());
-                    existingBrand.setAddress(brandDto.getAddress());
-                    existingBrand.setShortCode(brandDto.getShortCode());
+    public BrandDto updateBrand(UpdateBrandDto brandDto) {
+        var existingBrand = getBrand(brandDto.getId());
+        existingBrand.setName(brandDto.getName());
+        existingBrand.setAddress(brandDto.getAddress());
+        existingBrand.setShortCode(brandDto.getShortCode());
 
-                    var savedBrand = brandRepository.save(existingBrand);
-                    return modelMapper.map(savedBrand, BrandDto.class);
-                });
+        var savedBrand = brandRepository.save(existingBrand);
+        return modelMapper.map(savedBrand, BrandDto.class);
     }
 
     @Override
-    public boolean deleteBrand(long id) {
+    public void deleteBrand(long id) {
         if (!brandRepository.existsById(id)) {
-            return false;
+            throw new EntityNotFoundException("Brand not found");
         }
 
         brandRepository.deleteById(id);
-        return true;
     }
 
     @Override
@@ -71,5 +69,13 @@ public class BrandServiceImpl implements BrandService {
                 .stream()
                 .map(booking -> modelMapper.map(booking, BookingDto.class))
                 .toList();
+    }
+
+    private Brand getBrand(long id) {
+        var brandOptional = brandRepository.findById(id);
+        if (brandOptional.isEmpty()) {
+            throw new EntityNotFoundException("Brand not found");
+        }
+        return brandOptional.get();
     }
 }

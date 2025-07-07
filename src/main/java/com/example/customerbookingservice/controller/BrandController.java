@@ -27,7 +27,7 @@ public class BrandController {
     @GetMapping("/{id}")
     public ResponseEntity<BrandDto> getBrandById(@PathVariable long id) {
         var brand = brandService.getBrandById(id);
-        return brand.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(brand);
     }
 
     @PostMapping()
@@ -40,14 +40,13 @@ public class BrandController {
     @PutMapping()
     public ResponseEntity<BrandDto> updateBrand(@RequestBody @Valid UpdateBrandDto brandDto) {
         var brand = brandService.updateBrand(brandDto);
-        return brand.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(brand);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBrand(@PathVariable long id) {
-        return brandService.deleteBrand(id) ?
-                ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        brandService.deleteBrand(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/bookings")

@@ -7,6 +7,7 @@ import com.example.customerbookingservice.data.repository.CustomerRepository;
 import com.example.customerbookingservice.dto.customer.CreateCustomerDto;
 import com.example.customerbookingservice.dto.customer.UpdateCustomerDto;
 import com.example.customerbookingservice.service.impl.CustomerServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -17,6 +18,8 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class CustomerServiceImplTest {
@@ -76,8 +79,7 @@ class CustomerServiceImplTest {
         var result = customerService.getCustomerById(1L);
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getFullName()).isEqualTo("Jane Doe");
+        assertThat(result.getFullName()).isEqualTo("Jane Doe");
     }
 
     @Test
@@ -85,11 +87,14 @@ class CustomerServiceImplTest {
         // Given
         when(customerRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // When
-        var result = customerService.getCustomerById(1L);
+        // When + Then
+        Exception exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> customerService.getCustomerById(1L)
+        );
 
-        // Then
-        assertThat(result).isEmpty();
+        assertEquals("Customer not found", exception.getMessage());
+        verify(bookingRepository, never()).deleteById(anyLong());
     }
 
     @Test
@@ -154,9 +159,8 @@ class CustomerServiceImplTest {
         var result = customerService.updateCustomer(updateDto);
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getFullName()).isEqualTo("New Name");
-        assertThat(result.get().getStatus()).isEqualTo("ACTIVE");
+        assertThat(result.getFullName()).isEqualTo("New Name");
+        assertThat(result.getStatus()).isEqualTo("ACTIVE");
         verify(customerRepository).save(existing);
     }
 
@@ -173,11 +177,14 @@ class CustomerServiceImplTest {
 
         when(customerRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // When
-        var result = customerService.updateCustomer(updateDto);
+        // When + Then
+        Exception exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> customerService.updateCustomer(updateDto)
+        );
 
-        // Then
-        assertThat(result).isEmpty();
+        assertEquals("Customer not found", exception.getMessage());
+        verify(bookingRepository, never()).deleteById(anyLong());
     }
 
     @Test
@@ -186,10 +193,9 @@ class CustomerServiceImplTest {
         when(customerRepository.existsById(1L)).thenReturn(true);
 
         // When
-        var result = customerService.deleteCustomer(1L);
+        customerService.deleteCustomer(1L);
 
         // Then
-        assertThat(result).isTrue();
         verify(customerRepository).deleteById(1L);
     }
 
@@ -198,12 +204,14 @@ class CustomerServiceImplTest {
         // Given
         when(customerRepository.existsById(1L)).thenReturn(false);
 
-        // When
-        var result = customerService.deleteCustomer(1L);
+        // When + Then
+        Exception exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> customerService.deleteCustomer(1L)
+        );
 
-        // Then
-        assertThat(result).isFalse();
-        verify(customerRepository, never()).deleteById(anyLong());
+        assertEquals("Customer not found", exception.getMessage());
+        verify(bookingRepository, never()).deleteById(anyLong());
     }
 
     @Test

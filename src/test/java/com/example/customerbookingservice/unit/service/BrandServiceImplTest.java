@@ -6,6 +6,7 @@ import com.example.customerbookingservice.data.repository.BrandRepository;
 import com.example.customerbookingservice.dto.brand.CreateBrandDto;
 import com.example.customerbookingservice.dto.brand.UpdateBrandDto;
 import com.example.customerbookingservice.service.impl.BrandServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -16,6 +17,8 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class BrandServiceImplTest {
@@ -72,8 +75,7 @@ class BrandServiceImplTest {
         var result = brandService.getBrandById(2L);
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getName()).isEqualTo("Brand B");
+        assertThat(result.getName()).isEqualTo("Brand B");
     }
 
     @Test
@@ -81,11 +83,14 @@ class BrandServiceImplTest {
         // Given
         when(brandRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // When
-        var result = brandService.getBrandById(999L);
+        // When + Then
+        Exception exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> brandService.getBrandById(999L)
+        );
 
-        // Then
-        assertThat(result).isEmpty();
+        assertEquals("Brand not found", exception.getMessage());
+        verify(bookingRepository, never()).deleteById(anyLong());
     }
 
     @Test
@@ -147,9 +152,8 @@ class BrandServiceImplTest {
         var result = brandService.updateBrand(updateDto);
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getName()).isEqualTo("Updated Brand");
-        assertThat(result.get().getShortCode()).isEqualTo("NEW");
+        assertThat(result.getName()).isEqualTo("Updated Brand");
+        assertThat(result.getShortCode()).isEqualTo("NEW");
         verify(brandRepository).save(existing);
     }
 
@@ -165,11 +169,14 @@ class BrandServiceImplTest {
 
         when(brandRepository.findById(404L)).thenReturn(Optional.empty());
 
-        // When
-        var result = brandService.updateBrand(dto);
+        // When + Then
+        Exception exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> brandService.updateBrand(dto)
+        );
 
-        // Then
-        assertThat(result).isEmpty();
+        assertEquals("Brand not found", exception.getMessage());
+        verify(bookingRepository, never()).deleteById(anyLong());
     }
 
     @Test
@@ -178,10 +185,9 @@ class BrandServiceImplTest {
         when(brandRepository.existsById(10L)).thenReturn(true);
 
         // When
-        var result = brandService.deleteBrand(10L);
+        brandService.deleteBrand(10L);
 
         // Then
-        assertThat(result).isTrue();
         verify(brandRepository).deleteById(10L);
     }
 
@@ -190,12 +196,14 @@ class BrandServiceImplTest {
         // Given
         when(brandRepository.existsById(11L)).thenReturn(false);
 
-        // When
-        var result = brandService.deleteBrand(11L);
+        // When + Then
+        Exception exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> brandService.deleteBrand(11L)
+        );
 
-        // Then
-        assertThat(result).isFalse();
-        verify(brandRepository, never()).deleteById(anyLong());
+        assertEquals("Brand not found", exception.getMessage());
+        verify(bookingRepository, never()).deleteById(anyLong());
     }
 
     @Test
