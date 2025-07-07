@@ -4,18 +4,15 @@ API for managing customer bookings.
 
 ## 🚀 Features
 
-- Manage customers (CRUD)
-- Manage brands (CRUD)
 - Manage bookings for customers
 - Pagination support for customer, brand and booking lists
-- RESTful API with JSON
 - Docker Compose for easy startup
 
 ## 🛠️ Technologies
 
 - Java 21
 - Spring Boot
-- PostgreSQL (or your DB here)
+- PostgreSQL customer-booking-service
 - Docker & Docker Compose
 - ModelMapper
 - JPA / Hibernate
@@ -30,4 +27,4 @@ API for managing customer bookings.
 ### 🐳 Running with Docker Compose
 
 ```bash
-docker-compose up --buildkings
+docker compose up -d
