@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -42,7 +44,7 @@ class BrandControllerTest {
                 BrandDto.builder().id(2L).name("Brand B").address("Address B").shortCode("B2").build()
         );
 
-        given(brandService.getBrands()).willReturn(brands);
+        given(brandService.getBrands(any(Pageable.class))).willReturn(brands);
 
         // When and Then
         mockMvc.perform(get("/api/brands"))
@@ -146,7 +148,7 @@ class BrandControllerTest {
                 BookingDto.builder().id(2L).title("Booking 2").build()
         );
 
-        given(brandService.getBrandBookings(1L)).willReturn(bookings);
+        given(brandService.getBrandBookings(eq(1L), any(Pageable.class))).willReturn(bookings);
 
         // When and Then
         mockMvc.perform(get("/api/brands/1/bookings"))

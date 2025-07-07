@@ -11,6 +11,9 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,10 +53,10 @@ class CustomerServiceImplTest {
                 .updated(LocalDateTime.now())
                 .build();
 
-        when(customerRepository.findAll()).thenReturn(List.of(customer));
+        when(customerRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(customer)));
 
         // When
-        var customers = customerService.getCustomers();
+        var customers = customerService.getCustomers(PageRequest.of(0, 10));
 
         // Then
         assertThat(customers).hasSize(1);
@@ -217,13 +220,13 @@ class CustomerServiceImplTest {
     @Test
     void getCustomerBookings_returnsMappedDtos() {
         // Given
-        when(bookingRepository.findByCustomerId(1L)).thenReturn(emptyList());
+        when(bookingRepository.findByCustomerId(eq(1L), any(Pageable.class))).thenReturn(emptyList());
 
         // When
-        var bookings = customerService.getCustomerBookings(1L);
+        var bookings = customerService.getCustomerBookings(1L, PageRequest.of(0, 10));
 
         // Then
         assertThat(bookings).isEmpty();
-        verify(bookingRepository).findByCustomerId(1L);
+        verify(bookingRepository).findByCustomerId(eq(1L), any(Pageable.class));
     }
 }

@@ -7,6 +7,7 @@ import com.example.customerbookingservice.dto.brand.UpdateBrandDto;
 import com.example.customerbookingservice.service.BrandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,8 @@ public class BrandController {
     private final BrandService brandService;
 
     @GetMapping()
-    public ResponseEntity<List<BrandDto>> getBrands() {
-        return ResponseEntity.ok(brandService.getBrands());
+    public ResponseEntity<List<BrandDto>> getBrands(Pageable pageable) {
+        return ResponseEntity.ok(brandService.getBrands(pageable));
     }
 
     @GetMapping("/{id}")
@@ -50,7 +51,7 @@ public class BrandController {
     }
 
     @GetMapping("/{id}/bookings")
-    public ResponseEntity<List<BookingDto>> getBrandBookings(@PathVariable long id) {
-        return ResponseEntity.ok(brandService.getBrandBookings(id));
+    public ResponseEntity<List<BookingDto>> getBrandBookings(@PathVariable long id, Pageable pageable) {
+        return ResponseEntity.ok(brandService.getBrandBookings(id, pageable));
     }
 }

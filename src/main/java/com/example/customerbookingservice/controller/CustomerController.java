@@ -7,6 +7,7 @@ import com.example.customerbookingservice.dto.customer.UpdateCustomerDto;
 import com.example.customerbookingservice.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,8 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping
-    public ResponseEntity<List<CustomerDto>> getCustomers() {
-        return ResponseEntity.ok(customerService.getCustomers());
+    public ResponseEntity<List<CustomerDto>> getCustomers(Pageable pageable) {
+        return ResponseEntity.ok(customerService.getCustomers(pageable));
     }
 
     @GetMapping("/{id}")
@@ -50,7 +51,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}/bookings")
-    public ResponseEntity<List<BookingDto>> getCustomerBookings(@PathVariable long id) {
-        return ResponseEntity.ok(customerService.getCustomerBookings(id));
+    public ResponseEntity<List<BookingDto>> getCustomerBookings(@PathVariable long id, Pageable pageable) {
+        return ResponseEntity.ok(customerService.getCustomerBookings(id, pageable));
     }
 }

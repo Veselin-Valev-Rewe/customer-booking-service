@@ -12,6 +12,7 @@ import com.example.customerbookingservice.service.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +25,8 @@ public class CustomerServiceImpl implements CustomerService {
     private final ModelMapper modelMapper;
 
     @Override
-    public List<CustomerDto> getCustomers() {
-        return customerRepository.findAll()
+    public List<CustomerDto> getCustomers(Pageable pageable) {
+        return customerRepository.findAll(pageable)
                 .stream()
                 .map(customer -> modelMapper.map(customer, CustomerDto.class))
                 .toList();
@@ -65,8 +66,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<BookingDto> getCustomerBookings(long id) {
-        return bookingRepository.findByCustomerId(id)
+    public List<BookingDto> getCustomerBookings(long id, Pageable pageable) {
+        return bookingRepository.findByCustomerId(id, pageable)
                 .stream()
                 .map(booking -> modelMapper.map(booking, BookingDto.class))
                 .toList();

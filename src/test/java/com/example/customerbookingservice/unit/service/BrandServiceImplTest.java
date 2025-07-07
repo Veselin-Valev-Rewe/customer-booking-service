@@ -10,6 +10,9 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,10 +50,10 @@ class BrandServiceImplTest {
                 .updated(LocalDateTime.now())
                 .build();
 
-        when(brandRepository.findAll()).thenReturn(List.of(brand));
+        when(brandRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(brand)));
 
         // When
-        var result = brandService.getBrands();
+        var result = brandService.getBrands(PageRequest.of(0, 10));
 
         // Then
         assertThat(result).hasSize(1);
@@ -209,13 +212,13 @@ class BrandServiceImplTest {
     @Test
     void getBrandBookings_returnsMappedDtos() {
         // Given
-        when(bookingRepository.findByBrandId(1L)).thenReturn(emptyList());
+        when(bookingRepository.findByBrandId(eq(1L), any(Pageable.class))).thenReturn(emptyList());
 
         // When
-        var bookings = brandService.getBrandBookings(1L);
+        var bookings = brandService.getBrandBookings(1L, PageRequest.of(0, 10));
 
         // Then
         assertThat(bookings).isEmpty();
-        verify(bookingRepository).findByBrandId(1L);
+        verify(bookingRepository).findByBrandId(eq(1L), any(Pageable.class));
     }
 }
